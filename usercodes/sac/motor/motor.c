@@ -80,9 +80,11 @@ volatile static int32_t         encoderSum[2];
 volatile static int32_t         encoderOddL;
 volatile static int32_t         encoderOddR;
 
+
 #ifdef _ENABLE_MOTOR_TEST_
 static float testPower;
 static int8_t testCnt;
+static int16_t testCntIntr;
 static bool testUpDown;
 #endif /* _ENABLE_MOTOR_TEST_ */
 
@@ -114,6 +116,7 @@ void motorsInit(void) {
 #ifdef _ENABLE_MOTOR_TEST_
     testPower = 0.0;
     testCnt = 0;
+    testCntIntr = 0;
     testUpDown = true;
 #endif /* _ENABLE_MOTOR_TEST_ */
 }
@@ -145,6 +148,9 @@ void motorsControl_1ms(void) {
     encoderOddL += encoderStepBufferL[0];
     encoderOddR += encoderStepBufferR[0];
 
+#ifdef _ENABLE_MOTOR_TEST_
+    testCntIntr++;
+#endif /* _ENABLE_MOTOR_TEST_ */
 }
 
 void motorsDriveManual(const float nrmPwrL, const float nrmPwrR) {
@@ -201,8 +207,8 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize) {
     motorsReadRound(&roundL, &roundR);
     motorsReadRps(&rpsL, &rpsR);
     return snprintf(strBuffer, maxBufferSize,
-            "cnt = %d, pwrL/R = %f,%f, rpsL/R = %f,%f, roundL/R = %f,%f",
-            testCnt, pwrL,pwrR, rpsL,rpsR, roundL,roundR);
+            "cnt = %d, pwrL,R = %f,%f, rpsL,R = %f,%f, roundL,R = %f,%f",
+            testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
 }
 #endif /* _ENABLE_MOTOR_TEST_ */
 
@@ -211,37 +217,37 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize) {
 /*========VVVV Private Function Definition START VVVV========================*/
 void motorDrive(const float nrmPwrL, const float nrmPwrR) {
     float powerL, powerR;
-    if (1.0 < nrmPwrL) {
-        motorsPower[MOTOR_L] = 1.0;
+    if (1.0f < nrmPwrL) {
+        powerL = 1.0f;
     }
     else if (nrmPwrL < -1.0) {
-        motorsPower[MOTOR_L] = -1.0;
+        powerL = -1.0f;
     }
     else if ( (-STOP_NRMPWR_THRESHOLD < nrmPwrL) && (nrmPwrL < STOP_NRMPWR_THRESHOLD) ) {
-        motorsPower[MOTOR_L] = 0.0;
+        powerL = 0.0f;
     }
     else {
-        motorsPower[MOTOR_L] = nrmPwrL;
+        powerL = nrmPwrL;
     }
 
 
 
-    if (1.0 < nrmPwrR) {
-        motorsPower[MOTOR_R] = 1.0;
+    if (1.0f < nrmPwrR) {
+        powerR = 1.0f;
     }
-    else if (nrmPwrR < -1.0) {
-        motorsPower[MOTOR_R] = -1.0;
+    else if (nrmPwrR < -1.0f) {
+        powerR = -1.0f;
     }
     else if ( (-STOP_NRMPWR_THRESHOLD < nrmPwrR) && (nrmPwrR < STOP_NRMPWR_THRESHOLD) ) {
-        motorsPower[MOTOR_R] = 0.0;
+        powerR = 0.0f;
     }
     else {
-        motorsPower[MOTOR_R] = nrmPwrR;
+        powerR = nrmPwrR;
     }
 
-    if (motorsPower[MOTOR_L] < 0) {
+    if (powerL < 0) {
         // 左後進
-        powerL = -1 * motorsPower[MOTOR_L];
+        powerL = -1.0f * powerL;
         if (!POWER_DIRECTION_INV_L) {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin, MOTOR_CCW_L);
         }
@@ -252,7 +258,7 @@ void motorDrive(const float nrmPwrL, const float nrmPwrR) {
     }
     else {
         // 左前進
-        powerL = 1 * motorsPower[MOTOR_L];
+        powerL = 1.0f * powerL;
         if (!POWER_DIRECTION_INV_L) {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin,MOTOR_CW_L);
         }
@@ -262,9 +268,9 @@ void motorDrive(const float nrmPwrL, const float nrmPwrR) {
         __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint16_t)(3199 * powerL) );
     }
 
-    if (motorsPower[MOTOR_R] < 0) {
+    if (powerR < 0) {
         // 左後進
-        powerR = -1 * motorsPower[MOTOR_R];
+        powerR = -1.0f * powerR;
         if (!POWER_DIRECTION_INV_R) {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin, MOTOR_CCW_R);
         }
@@ -275,7 +281,7 @@ void motorDrive(const float nrmPwrL, const float nrmPwrR) {
     }
     else {
         // 左前進
-        powerR = 1 * motorsPower[MOTOR_R];
+        powerR = 1.0 * powerR;
         if (!POWER_DIRECTION_INV_R) {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin,MOTOR_CW_R);
         }
@@ -284,6 +290,8 @@ void motorDrive(const float nrmPwrL, const float nrmPwrR) {
         }
         __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, (uint16_t)(3199 * powerR) );
     }
+    motorsPower[MOTOR_L] = powerL;
+    motorsPower[MOTOR_R] = powerR;
 }
 
 int32_t encoderCalcStep(const uint16_t now, const uint16_t last, const uint16_t gapth, const bool invertFlag) {

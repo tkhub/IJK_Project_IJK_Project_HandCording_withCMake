@@ -68,3 +68,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
     # Add user defined libraries
 )
+
+# 実行ファイルターゲットにリンカオプションを追加(浮動小数点対応のprintfを有効化)
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -u _printf_float)

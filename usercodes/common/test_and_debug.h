@@ -30,7 +30,7 @@ extern "C" {
 #define _ENABLE_SAC_TEST_   //! SACレイヤーのテスト・デバッグ用のスイッチ
 
 #ifdef _ENABLE_SAC_TEST_
-//#define _ENABLE_UISW_TEST_  //! UISWのテスト・デバッグ用のスイッチ
+// #define _ENABLE_UISW_TEST_  //! UISWのテスト・デバッグ用のスイッチ
 // #define _ENABLE_MOTOR_TEST_   //! MOTORのテスト・デバッグ用のスイッチ
 // #define _ENABLE_BUZZER_TEST_    //! BUZZERのテスト・デバッグ用のスイッチ
 // #define _ENABLE_LINEMKR_TEST_   //! ラインセンサ・マーカセンサのテストデバッグ用のスイッチ

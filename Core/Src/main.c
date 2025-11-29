@@ -121,7 +121,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
             timerInterruptHandler_10msB();
         }
 
-        if (timerIntrDevCnt == 29) {
+        if (timerIntrDevCnt == 19) {
             timerIntrDevCnt = 0;
         }
         else {
@@ -283,17 +283,8 @@ void timerInterruptHandler_500us(void) {
 }
 
 void timerInterruptHandler_1msA(void) {
-
     linesensorsMeasure_1ms();
     markersensorsMeasure_1ms();
-    //=V=V=V=V= 1ms Timing Start =V=V=V=V=
-
-
-
-    //=A=A=A=A= 1ms Timing End =A=A=A=A=
-    //=V=V=V=V= 10ms Timing Start =V=V=V=V=
-
-    //=A=A=A=A= 10ms Timing End =A=A=A=A=
 }
 
 void timerInterruptHandler_1msB(void) {
