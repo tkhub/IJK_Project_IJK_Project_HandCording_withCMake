@@ -37,7 +37,7 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 #my cordes
-add_subdirectory(usercodes) # <-- コメントを外すか、ここに追記
+add_subdirectory(usercodes)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
