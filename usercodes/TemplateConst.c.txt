@@ -1,0 +1,27 @@
+/**
+ * @file TestCnst.c
+ * @brief 簡単な説明(定数定義)
+ * @author takap
+ * @date Nov 30, 2025
+ * @Version 0.00
+ */
+
+/*========VVVV Include Standard Header START VVVV============================*/
+/*========AAAA Include Standard Header END AAAA==============================*/
+
+/*========VVVV Include Local Header START VVVV===============================*/
+#include "TestCnst.h"
+/*========AAAA Include Local Header END AAAA=================================*/
+
+/*========VVVV MACRO Definition START VVVV===================================*/
+/** 
+ * @brief マクロ MAX_NANK の説明
+ */
+/* # define MAX_NANKA 256 */
+
+/*========AAAA MACRO Definition END AAAA=====================================*/
+
+/*========VVVV GLOBAL Variable Definition START VVVV=========================*/
+/* int global_var; */ /* ヘッダファイルで説明済みのためDoxygenのコメントは不要 */
+
+/*========AAAA GLOBAL Variable Definition END AAAA===========================*/
