@@ -122,7 +122,7 @@ void motorsReadRps(float* rpsL, float* rpsR);
  */
 void motorsReadRound(float* roundL, float* roundR);
 
-#ifdef _ENABLE_MOTOR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
 /**
  * @brief motorのデバッグ用関数
  * @param [out] strBuffer printfデバッグ用の文字列格納先
@@ -130,7 +130,7 @@ void motorsReadRound(float* roundL, float* roundR);
  * @return 生成した文字列の長さ
  */
 uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize);
-#endif /* _ENABLE_MOTOR_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA GLOBAL Function Declaration END AAAA==========================*/
 

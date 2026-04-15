@@ -20,22 +20,6 @@ extern "C" {
 /*========AAAA Include Local Header END AAAA=================================*/
 
 /*========VVVV Typedef Definition START VVVV=================================*/
-/**
- * @brief ABCの説明
- * /
-/* typedef enum {
- *  A,  //! Aの説明
- *  B,  //! Bの説明
- *  C   //! Cの説明
- * } ABC_t;
-*/
-
-/* typedef struct {
- *  int D,  //! Dの説明
- *  int E,  //! Eの説明
- *  int F   //! Fの説明
- * } DEF_t;
-*/
 /*========AAAA Typedef Definition END AAAA===================================*/
 
 /*========VVVV MACRO Definition START VVVV===================================*/
@@ -53,7 +37,6 @@ void appInit(void);
 void appIntervalHandler_1ms(void);
 void appIntervalHandler_10ms(void);
 void appMainLoop(void);
-
 
 /*========AAAA GLOBAL Function Declaration END AAAA==========================*/
 

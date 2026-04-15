@@ -82,7 +82,7 @@ void uisw_10ms(void);
  */
 uiswevent_t uiswRead(void);
 
-#ifdef _ENABLE_UISW_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_UISW_TEST
 /**
  * @brief UISWのデバッグ用関数
  * @param [out] strBuffer printfデバッグ用の文字列格納先
@@ -90,7 +90,7 @@ uiswevent_t uiswRead(void);
  * @return 生成した文字列の長さ
  */
 uint8_t uiswTest(char* strBuffer, uint8_t maxBufferSize);
-#endif /* _ENABLE_UISW_TEST_ */
+#endif /* DEBUGMODE_UISW_TEST_ */
 
 /*========AAAA GLOBAL Function Declaration END AAAA==========================*/
 

@@ -15,10 +15,11 @@
 #include <string.h>
 #include "orgtypedef.h"
 
-#ifdef _ENABLE_BATTERY_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST
 #include <stdio.h>
 #include <stdlib.h>
-#endif /* _ENABLE_BATTERY_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST */
+
 /*========AAAA Include Local Header END AAAA=================================*/
 
 /*========VVVV Typedef Definition START VVVV=================================*/
@@ -145,7 +146,7 @@ uint8_t batteryState2String(batterystatus_t btst, char * str) {
     return strlen(str);
 }
 
-#ifdef _ENABLE_BATTERY_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST
 uint8_t batteryTest(char* strBuffer, uint8_t maxBufferSize) {
     char batteryStr[16];
     batterystatus_t btst;
@@ -153,7 +154,7 @@ uint8_t batteryTest(char* strBuffer, uint8_t maxBufferSize) {
     batteryState2String(btst, batteryStr);
     return snprintf(strBuffer, maxBufferSize, "Vbat = %f(%d),\t\tState = %s(%d,%d)", batteryRead(), batteryRaw, batteryStr, batteryStateLevel, btst);
 }
-#endif /* _ENABLE_BATTERY_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST */
 
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/

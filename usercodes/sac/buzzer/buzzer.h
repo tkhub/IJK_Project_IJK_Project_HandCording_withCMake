@@ -77,7 +77,7 @@ void buzzerSetSchedule(buzzerSchedule_t bzsch);
  */
 void buzzerSetScheduleMs(uint16_t onMs, uint16_t offMs);
 
-#ifdef _ENABLE_BUZZER_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST
 /**
  * @brief BUZZERのデバッグ用関数
  * @param [out] strBuffer printfデバッグ用の文字列格納先
@@ -85,7 +85,7 @@ void buzzerSetScheduleMs(uint16_t onMs, uint16_t offMs);
  * @return 生成した文字列の長さ
  */
 uint8_t buzzerTest(char* strBuffer, uint8_t maxBufferSize);
-#endif /* _ENABLE_BUZZER_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST */
 
 /*========AAAA GLOBAL Function Declaration END AAAA==========================*/
 

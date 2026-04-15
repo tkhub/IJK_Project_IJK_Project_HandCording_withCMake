@@ -14,10 +14,11 @@
 #include "uisw_const.h"
 #include "gpio.h"
 
-#ifdef _ENABLE_UISW_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_UISW_TEST
+// デバッグではターミナルへの文字表示を行う
 #include <stdio.h>
 #include <string.h>
-#endif /* _ENABLE_UISW_TEST_ */
+#endif /* DEBUGMODE_UISW_TEST */
 
 /*========AAAA Include Local Header END AAAA=================================*/
 
@@ -244,7 +245,7 @@ uiswevent_t uiswRead(void) {
     return event;
 }
 
-#ifdef _ENABLE_UISW_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_UISW_TEST
 /**
  * @brief UISWのデバッグ用関数
  * @param [out] strBuffer printfデバッグ用の文字列格納先
@@ -324,7 +325,7 @@ uint8_t uiswTest(char* strBuffer, uint8_t maxBufferSize) {
     return snprintf(strBuffer, maxBufferSize,"SQ:%s, EV=%s, SW1CNT=%d, SW2CNT=%d", sqstr, evstr, sw1cnt, sw2cnt);
 }
 
-#endif /* _ENABLE_UISW_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_UISW_TEST */
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/
 

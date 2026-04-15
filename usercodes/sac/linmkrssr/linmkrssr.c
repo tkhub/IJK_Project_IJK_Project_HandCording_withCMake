@@ -17,38 +17,16 @@
 #include "linmkrssr_const.h"
 #include "linmkrssr_private.h"
 
-#ifdef _ENABLE_LINEMKR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <hex2bindec.h>
-#endif /* _ENABLE_LINEMKR_TEST_*/
+#endif /* SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST */
 
 /*========AAAA Include Local Header END AAAA=================================*/
 
 /*========VVVV Typedef Definition START VVVV=================================*/
-/**
- * @brief ABC_t 型の列挙体
- */
-/**
- * typedef enum {
- *  A,  //! Aの説明
- *  B,  //! Bの説明
- *  C   //! Cの説明
- * } ABC_t;
-*/
-
-/**
- * @brief DEF_t 型の構造体
- */
-/**
- * typedef struct {
- *  int D,  //!  Dの説明
- *  int E,  //!  Eの説明
- *  int F   //!  Fの説明
- * } DEF_t;
-*/
-
 /*========AAAA Typedef Definition END AAAA===================================*/
 
 /*========VVVV MACRO Definition START VVVV===================================*/
@@ -287,7 +265,7 @@ uint8_t markersensorsRead(void) {
     return markerDetected;
 }
 
-#ifdef _ENABLE_LINEMKR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST
 uint8_t linmkrssrTest(char* strBuffer, uint8_t maxBufferSize) {
     uint8_t linebin = linesensorsReadBin();
     float linepos = linesensorsReadPosition();
@@ -303,7 +281,7 @@ uint8_t linmkrssrTest(char* strBuffer, uint8_t maxBufferSize) {
                                         rawMarkersensorValue[MKR_SSR], markerSensorsParam[MKR_SSR].thresholdH, markerSensorsParam[MKR_SSR].thresholdL,
                                         nrmLinesensors[LL_SSR], nrmLinesensors[LC_SSR], nrmLinesensors[RC_SSR], nrmLinesensors[RR_SSR]);
 }
-#endif /* _ENABLE_LINEMKR_TEST_*/
+#endif /* SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST */
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/
 

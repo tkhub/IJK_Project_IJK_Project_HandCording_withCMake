@@ -13,10 +13,10 @@
 #include "buzzer.h"
 #include "gpio.h"
 
-#ifdef _ENABLE_BUZZER_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST
 #include <stdio.h>
 #include <string.h>
-#endif /* _ENABLE_BUZZER_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST */
 
 /*========AAAA Include Local Header END AAAA=================================*/
 
@@ -42,9 +42,9 @@ volatile static uint16_t buzzerOnCount;
 volatile static uint16_t buzzerOffCount;
 volatile static bool buzzerExecFlag;
 
-#ifdef _ENABLE_BUZZER_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST
 static uint8_t testModeCnt;
-#endif /* _ENABLE_BUZZER_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST */
 
 /*========AAAA Private Variable Definition END AAAA==========================*/
 
@@ -62,9 +62,9 @@ void buzzerInit(buzzerSchedule_t* bzbfr, uint8_t bzbfrsize) {
     buzzerOnCount = 0;
     buzzerOffCount = 0;
     buzzerExecFlag = false;
-#ifdef _ENABLE_BUZZER_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST
     testModeCnt = 0;
-#endif /* _ENABLE_BUZZER_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST */
 }
 
 void buzzer_10ms(void) {
@@ -107,7 +107,7 @@ void buzzerSetScheduleMs(uint16_t onMs, uint16_t offMs) {
     buzzerSetSchedule(tmp);
 }
 
-#ifdef _ENABLE_BUZZER_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST
 uint8_t buzzerTest(char* strBuffer, uint8_t maxBufferSize) {
     uint8_t len;
     switch (testModeCnt) {
@@ -146,8 +146,7 @@ uint8_t buzzerTest(char* strBuffer, uint8_t maxBufferSize) {
 
     return len;
 }
-#endif /* _ENABLE_BUZZER_TEST_ */
-
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST */
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/
 

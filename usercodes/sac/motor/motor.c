@@ -18,10 +18,10 @@
 #include "tim.h"
 #include "gpio.h"
 
-#ifdef _ENABLE_MOTOR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
 #include <stdio.h>
 #include <string.h>
-#endif /* _ENABLE_MOTOR_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA Include Local Header END AAAA=================================*/
 
@@ -81,12 +81,12 @@ volatile static int32_t         encoderOddL;
 volatile static int32_t         encoderOddR;
 
 
-#ifdef _ENABLE_MOTOR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
 static float testPower;
 static int8_t testCnt;
 static int16_t testCntIntr;
 static bool testUpDown;
-#endif /* _ENABLE_MOTOR_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA Private Variable Definition END AAAA==========================*/
 
@@ -113,12 +113,12 @@ void motorsInit(void) {
     motorsDriveManual(0.0, 0.0);
     encoderL_last = 0x0000;
     encoderR_last = 0x0000;
-#ifdef _ENABLE_MOTOR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
     testPower = 0.0;
     testCnt = 0;
     testCntIntr = 0;
     testUpDown = true;
-#endif /* _ENABLE_MOTOR_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 }
 
 void motorsControl_1ms(void) {
@@ -181,7 +181,7 @@ void motorsReadRound(float* roundL, float* roundR) {
     *roundR = (float)encoderOddR / ENCODER_RSOLUTION;
 }
 
-#ifdef _ENABLE_MOTOR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
 uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize) {
     float pwrL, pwrR;
     float roundL, roundR;
@@ -210,7 +210,7 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize) {
             "cnt = %d, pwrL,R = %f,%f, rpsL,R = %f,%f, roundL,R = %f,%f",
             testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
 }
-#endif /* _ENABLE_MOTOR_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/
 
