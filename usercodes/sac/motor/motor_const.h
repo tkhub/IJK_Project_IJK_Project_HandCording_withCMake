@@ -50,7 +50,12 @@ extern "C" {
  */
 /* # define MAX_NANKA 256 */
 
-#define MOTOR_RPS_RECORD_SIZE 64
+// #define MOTOR_RPS_RECORD_SIZE 64
+#define MOTOR_RPS_RECORD_SIZE 32
+
+/*========VVVV Filter Configuration START VVVV================================*/
+
+/*========AAAA Filter Configuration END AAAA==================================*/
 
 
 
@@ -71,6 +76,7 @@ extern const bool POWER_DIRECTION_INV_R;
 extern const bool ENCODER_DIRECTION_INV_L;
 extern const bool ENCODER_DIRECTION_INV_R;
 extern const uint16_t MOTOR_PWM_MAX;
+extern const float ENCODER_IIR_GAIN;
 
 
 /*========AAAA GLOBAL Variable Declaration END AAAA==========================*/

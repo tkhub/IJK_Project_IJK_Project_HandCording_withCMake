@@ -23,3 +23,4 @@ const bool POWER_DIRECTION_INV_R    = false;
 const bool ENCODER_DIRECTION_INV_L  = true;
 const bool ENCODER_DIRECTION_INV_R  = false;
 const uint16_t MOTOR_PWM_MAX        = 3199;
+const float ENCODER_IIR_GAIN = 0.80f;

@@ -223,6 +223,7 @@ int main(void)
     sacLoop();
     appMainLoop();
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
       HAL_Delay(50);
   }

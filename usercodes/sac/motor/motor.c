@@ -37,15 +37,15 @@ typedef enum {
 /*========AAAA Typedef Definition END AAAA===================================*/
 
 /*========VVVV MACRO Definition START VVVV===================================*/
-/** 
- * @brief マクロ MAX_NANK の説明
- */
-/* # define MAX_NANKA 256 */
+#define CH_LEFT     0
+#define CH_RIGHT    1
+
 
 /*========AAAA MACRO Definition END AAAA=====================================*/
 
 /*========VVVV GLOBAL Variable Definition START VVVV=========================*/
 /* int global_var; */ /* ヘッダファイルで説明済みのためDoxygenのコメントは不要 */
+static const float PPS_TO_RPS = 1.0f; // 仮の値。実際には、エンコーダの分解能やサンプリング周期に基づいて計算する必要がある
 
 /*========AAAA GLOBAL Variable Definition END AAAA===========================*/
 
@@ -63,29 +63,26 @@ volatile static float           motorsRound[2];
 //! モータの出力
 volatile static float           motorsPower[2];
 
-//! 左エンコーダのカウント量差分のバッファ
-volatile static int16_t         encoderStepBufferL[MOTOR_RPS_RECORD_SIZE];
-//! 右エンコーダのカウント量差分のバッファ
-volatile static int16_t         encoderStepBufferR[MOTOR_RPS_RECORD_SIZE];
-
-//! 左エンコーダの前回カウント値の保存先
-volatile static uint16_t        encoderL_last;
-//! 左エンコーダの前回カウント値の保存先
-volatile static uint16_t        encoderR_last;
-
-//! エンコーダステップ数のバッファの合計
-volatile static int32_t         encoderSum[2];
-
 //! 積算回転量
-volatile static int32_t         encoderOddL;
-volatile static int32_t         encoderOddR;
+volatile static int32_t         encoderOdd[2];
 
+//! 左エンコーダのカウント量差分のバッファ
+volatile static int32_t         encoderDeltaBuffer[2][MOTOR_RPS_RECORD_SIZE];
+//! バッファインデックス
+volatile static uint8_t         encoderBufferIdx;
+
+volatile static float           encoderDeltaIIR[2];
+
+//! 最終出力(RPS: 回/秒)
+
+volatile static uint16_t        encoderLast[2];
 
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
-static float testPower;
-static int8_t testCnt;
-static int16_t testCntIntr;
-static bool testUpDown;
+volatile static float testPower;
+volatile static int16_t testCnt;
+volatile static int8_t testCnt2;
+volatile static int16_t testCntIntr;
+volatile static bool testUpDown;
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA Private Variable Definition END AAAA==========================*/
@@ -110,47 +107,69 @@ int32_t encoderCalcStep(const uint16_t now, const uint16_t last, const uint16_t 
 
 /*========VVVV GLOBAL Function Definition START VVVV=========================*/
 void motorsInit(void) {
+    uint8_t i;
     motorsDriveManual(0.0, 0.0);
-    encoderL_last = 0x0000;
-    encoderR_last = 0x0000;
+    
+    // バッファ初期化
+    for (i = 0; i < MOTOR_RPS_RECORD_SIZE; i++) {
+        encoderDeltaBuffer[CH_LEFT][i] = 0;
+        encoderDeltaBuffer[CH_RIGHT][i] = 0;
+    }
+    encoderBufferIdx = 0;
+    
+    // フィルタ状態初期化
+    encoderDeltaIIR[CH_LEFT] = 0.0f;
+    encoderDeltaIIR[CH_RIGHT] = 0.0f;
+    
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
     testPower = 0.0;
     testCnt = 0;
+    testCnt2 = 0;
     testCntIntr = 0;
     testUpDown = true;
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 }
 
 void motorsControl_1ms(void) {
-    uint16_t encL, encR, cnt;
-    int32_t dencLsum = 0, dencRsum = 0;
-
-    encL = __HAL_TIM_GET_COUNTER(&htim1);
-    encR = __HAL_TIM_GET_COUNTER(&htim2);
-
-    for (cnt = 1; cnt < MOTOR_RPS_RECORD_SIZE; cnt++) {
-        encoderStepBufferL[cnt] = encoderStepBufferL[cnt - 1];
-        dencLsum += encoderStepBufferL[cnt];
-        encoderStepBufferR[cnt] = encoderStepBufferR[cnt - 1];
-        dencRsum += encoderStepBufferR[cnt];
+    static uint16_t encL, encR;
+    static int32_t deltaL, deltaR;
+    uint8_t i;
+    int32_t sumL = 0, sumR = 0;
+    
+    // エンコーダのカウント値を取得
+    encL = (uint16_t)__HAL_TIM_GET_COUNTER(&htim1);
+    encR = (uint16_t)__HAL_TIM_GET_COUNTER(&htim2);
+    
+    // 差分計算(オーバーフロー対応)
+    deltaL = encoderCalcStep(encL, encoderLast[CH_LEFT], ENCODER_DIR_GAP, ENCODER_DIRECTION_INV_L);
+    deltaR = encoderCalcStep(encR, encoderLast[CH_RIGHT], ENCODER_DIR_GAP, ENCODER_DIRECTION_INV_R);
+    
+    // 最終値を保存
+    encoderLast[CH_RIGHT] = encR;
+    encoderLast[CH_LEFT] = encL;
+    
+    // リングバッファに差分を格納
+    encoderDeltaBuffer[CH_LEFT][encoderBufferIdx] = deltaL;
+    encoderDeltaBuffer[CH_RIGHT][encoderBufferIdx] = deltaR;
+    encoderBufferIdx = (encoderBufferIdx + 1) % MOTOR_RPS_RECORD_SIZE;
+    
+    // ===== 移動平均フィルタ =====
+    // 計算コスト: O(N) where N = MOTOR_RPS_RECORD_SIZE
+    for (i = 0; i < MOTOR_RPS_RECORD_SIZE; i++) {
+        sumL += encoderDeltaBuffer[CH_LEFT][i];
+        sumR += encoderDeltaBuffer[CH_RIGHT][i];
     }
-    encoderStepBufferL[0] = encoderCalcStep(encL, encoderL_last, ENCODER_DIR_GAP, ENCODER_DIRECTION_INV_L);
-    encoderStepBufferR[0] = encoderCalcStep(encR, encoderR_last, ENCODER_DIR_GAP, ENCODER_DIRECTION_INV_R);
-    encoderL_last = encL;
-    encoderR_last = encR;
+    
+    encoderDeltaIIR[CH_LEFT] = ((float)sumL - encoderDeltaIIR[CH_LEFT]) * ENCODER_IIR_GAIN + encoderDeltaIIR[CH_LEFT];
+    encoderDeltaIIR[CH_RIGHT] = ((float)sumR - encoderDeltaIIR[CH_RIGHT]) * ENCODER_IIR_GAIN + encoderDeltaIIR[CH_RIGHT];
+    
+    // 積算回転量更新
+    encoderOdd[CH_LEFT] += deltaL;
+    encoderOdd[CH_RIGHT] += deltaR;
 
-    dencLsum += encoderStepBufferL[0];
-    dencRsum += encoderStepBufferR[0];
-
-    encoderSum[MOTOR_L] = dencLsum;
-    encoderSum[MOTOR_R] = dencRsum;
-
-    encoderOddL += encoderStepBufferL[0];
-    encoderOddR += encoderStepBufferR[0];
-
-#ifdef _ENABLE_MOTOR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
     testCntIntr++;
-#endif /* _ENABLE_MOTOR_TEST_ */
+#endif
 }
 
 void motorsDriveManual(const float nrmPwrL, const float nrmPwrR) {
@@ -167,49 +186,94 @@ void motorsResetRound(void) {
 }
 
 void motorsReadRps(float* rpsL, float* rpsR) {
-    *rpsL = (float)(1000 * encoderSum[MOTOR_L] / MOTOR_RPS_RECORD_SIZE) / ENCODER_RSOLUTION;
-    *rpsR = (float)(1000 * encoderSum[MOTOR_R] / MOTOR_RPS_RECORD_SIZE) / ENCODER_RSOLUTION;
+    // フィルタ済みRPSを返す(移動平均+三角窓+IIRフィルタ適用済み)
+    *rpsL = encoderDeltaIIR[CH_LEFT];
+    *rpsR = encoderDeltaIIR[CH_RIGHT];
 }
 
 void motorsReadPower(float* nrmPwrL, float* nrmPwrR) {
-    *nrmPwrL = motorsPower[MOTOR_L];
-    *nrmPwrR = motorsPower[MOTOR_R];
+    *nrmPwrL = motorsPower[MOTOR_L] * PPS_TO_RPS;
+    *nrmPwrR = motorsPower[MOTOR_R] * PPS_TO_RPS;
 }
 
 void motorsReadRound(float* roundL, float* roundR) {
-    *roundL = (float)encoderOddL / ENCODER_RSOLUTION;
-    *roundR = (float)encoderOddR / ENCODER_RSOLUTION;
+    *roundL = (float)encoderOdd[CH_LEFT] / ENCODER_RSOLUTION;
+    *roundR = (float)encoderOdd[CH_RIGHT] / ENCODER_RSOLUTION;
 }
 
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
+// #define __ENCODER_TEST__
+#ifndef __ENCODER_TEST__
 uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize) {
     float pwrL, pwrR;
     float roundL, roundR;
     float rpsL, rpsR;
-
-    if (testCnt == -100) {
-        testUpDown = true;
+    if (100 < testCnt)
+    {
+        testCnt = 0;
+        if (testCnt2 < -100) {
+            testCnt2 = -100;
+            testUpDown = true;
+        }
+        else if (testCnt2 > 100) {
+            testCnt2 = 100;
+            testUpDown = false;
+        }
+        if (testCnt2 == -100) {
+            testUpDown = true;
+        }
+        else if (testCnt2 == 100) {
+            testUpDown = false;
+        }
+        else {
+            /* NOP */
+        }
+        if (testUpDown == true) {
+            testCnt2 += 10;
+        }
+        else {
+            testCnt2 -= 10;
+        }
     }
-    else if (testCnt == 100) {
-        testUpDown = false;
-    }
-    else {
-        /* NOP */
-    }
-    if (testUpDown == true) {
+    else
+    {
         testCnt++;
     }
-    else {
-        testCnt--;
-    }
-    motorsDriveManual((float)-testCnt / 100.0f, (float)testCnt / 100.0f);
+    motorsDriveManual((float)-testCnt2 / 100.0f, (float)testCnt2 / 100.0f);
     motorsReadPower(&pwrL, &pwrR);
     motorsReadRound(&roundL, &roundR);
     motorsReadRps(&rpsL, &rpsR);
+    // return snprintf(strBuffer, maxBufferSize,
+    //         "cnt = %d, pwrL,R = %f,%f, rpsL,R = %f,%f, roundL,R = %f,%f",
+    //         testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
     return snprintf(strBuffer, maxBufferSize,
-            "cnt = %d, pwrL,R = %f,%f, rpsL,R = %f,%f, roundL,R = %f,%f",
+            ",%d,%f,%f,%f,%f,%f,%f",
             testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
 }
+#else /* __ENCODER_TEST__ */
+uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize) {
+    int8_t encpwrcnt = 0;
+    uint8_t cnt;
+    for (encpwrcnt = -100; encpwrcnt <= 100; encpwrcnt += 20)
+    {
+        printf("[pwr = %d] : Left {\n\r", encpwrcnt);
+        motorsDriveManual((float)-encpwrcnt/ 100.0f, (float)encpwrcnt/ 100.0f);
+        HAL_Delay(5000);
+        for (cnt = 0; cnt < MOTOR_RPS_RECORD_SIZE; cnt++)
+        {
+            printf("%lu\n\r", encoderStepBuffer[CH_LEFT][cnt]);
+        }
+        printf("}\n\r : Right {\n\r");
+        for (cnt = 0; cnt < MOTOR_RPS_RECORD_SIZE; cnt++)
+        {
+            printf("%lu\n\r", encoderStepBuffer[CH_RIGHT] [cnt]);
+        }
+        printf("}\n\r");
+    }
+    return snprintf(strBuffer, maxBufferSize,"ENCTEST END");
+}
+
+#endif /* __ENCODER_TEST__ */
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/
