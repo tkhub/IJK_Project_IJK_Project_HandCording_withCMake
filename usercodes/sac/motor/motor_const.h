@@ -77,7 +77,7 @@ extern const bool ENCODER_DIRECTION_INV_L;
 extern const bool ENCODER_DIRECTION_INV_R;
 extern const uint16_t MOTOR_PWM_MAX;
 extern const float ENCODER_IIR_GAIN;
-
+extern const float MOTOR_INTR_CYCLE_MS;
 
 /*========AAAA GLOBAL Variable Declaration END AAAA==========================*/
 

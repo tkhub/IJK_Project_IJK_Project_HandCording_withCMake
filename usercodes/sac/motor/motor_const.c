@@ -23,4 +23,5 @@ const bool POWER_DIRECTION_INV_R    = false;
 const bool ENCODER_DIRECTION_INV_L  = true;
 const bool ENCODER_DIRECTION_INV_R  = false;
 const uint16_t MOTOR_PWM_MAX        = 3199;
-const float ENCODER_IIR_GAIN = 0.80f;
+const float ENCODER_IIR_GAIN = 0.5f;
+const float MOTOR_INTR_CYCLE_MS    = 1.0f;          // モータ制御周期(ms)
