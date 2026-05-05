@@ -67,12 +67,22 @@ volatile static float           encoderDeltaIIR[2];
 volatile static uint16_t        encoderLast[2];
 
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
-volatile static float testPower;
-volatile static int16_t testCnt;
-volatile static int8_t testCnt2;
-volatile static int16_t testCntIntr;
-volatile static bool testUpDown;
-volatile static bool reverseMode;
+volatile static uint16_t testCnt;
+volatile static int16_t testModePowerLeft;
+volatile static int16_t testModePowerRight;
+static const uint16_t TEST_HOLD_TIME_MS = (uint16_t)((float)(5.0F)/(50.0F * 0.001F));
+static const uint8_t TEST_STEP = 20;
+typedef enum {
+    LEFT_FORWARD_RIGHT_BACKWARD_UP,
+    LEFT_FORWARD_RIGHT_BACKWARD_DOWN,
+    LEFT_BACKWARD_RIGHT_FORWARD_UP,
+    LEFT_BACKWARD_RIGHT_FORWARD_DOWN
+}testMode_t;
+
+volatile static testMode_t testMode;
+
+
+
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
 /*========AAAA Private Variable Definition END AAAA==========================*/
@@ -101,12 +111,10 @@ void motorsInit(void) {
     motorsResetRound();
 
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
-    testPower = 0.0;
     testCnt = 0;
-    testCnt2 = 0;
-    testCntIntr = 0;
-    testUpDown = true;
-    reverseMode = false;
+    testModePowerLeft = 0;
+    testModePowerRight = 0;
+    testMode = LEFT_FORWARD_RIGHT_BACKWARD_UP;
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 }
 
@@ -151,7 +159,6 @@ void motorsControl_1ms(void) {
     encoderOdd[CH_RIGHT] += deltaR;
 
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
-    testCntIntr++;
 #endif
 }
 
@@ -182,10 +189,12 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
         powerR = nrmPwrR;
     }
 
+    __disable_irq();
+    motorsPower[MOTOR_L] = powerL;
+    motorsPower[MOTOR_R] = powerR;
     if (powerL < 0) {
         // 左後進
         powerL = -1.0f * powerL;
-        __disable_irq();
         if (!POWER_DIRECTION_INV_L)
         {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin, MOTOR_CCW_L);
@@ -195,13 +204,11 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin,MOTOR_CW_L);
         }
         __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint16_t)(3199 * powerL) );
-        __enable_irq();
     }
     else
     {
         // 左前進
         powerL = 1.0f * powerL;
-        __disable_irq();
         if (!POWER_DIRECTION_INV_L)
         {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin,MOTOR_CW_L);
@@ -211,13 +218,11 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin,MOTOR_CCW_L);
         }
         __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint16_t)(3199 * powerL) );
-        __enable_irq();
     }
 
     if (powerR < 0) {
         // 左後進
         powerR = -1.0f * powerR;
-        __disable_irq();
         if (!POWER_DIRECTION_INV_R)
         {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin, MOTOR_CCW_R);
@@ -227,12 +232,10 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin, MOTOR_CW_R);
         }
         __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, (uint16_t)(3199 * powerR) );
-        __enable_irq();
     }
     else {
         // 左前進
         powerR = 1.0 * powerR;
-        __disable_irq();
         if (!POWER_DIRECTION_INV_R) {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin,MOTOR_CW_R);
         }
@@ -240,11 +243,7 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin,MOTOR_CCW_R);
         }
         __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, (uint16_t)(3199 * powerR) );
-        __enable_irq();
     }
-    __disable_irq();
-    motorsPower[MOTOR_L] = powerL;
-    motorsPower[MOTOR_R] = powerR;
     __enable_irq();
 }
 
@@ -302,52 +301,69 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
     float pwrL, pwrR;
     float roundL, roundR;
     float rpsL, rpsR;
-    if (500 < testCnt)
+
+    if (TEST_HOLD_TIME_MS < testCnt)
     {
         testCnt = 0;
-        if (testCnt2 <= -100)
+        switch (testMode)
         {
-            testCnt2 = -100;
-            testUpDown = true;
-            if (reverseMode == false)
-            {
-                reverseMode = true;
-            }
-            else
-            {
-                reverseMode = false;
-            }
-        }
-        else if (100 <= testCnt2)
-        {
-            testCnt2 = 100;
-            testUpDown = false;
-        }
-        else
-        {
-            /* NOP */
-        }
-        if (testUpDown == true)
-        {
-            testCnt2 += 10;
-        }
-        else
-        {
-            testCnt2 -= 10;
+            case LEFT_FORWARD_RIGHT_BACKWARD_UP:
+                // Left 0 ~ +100, Right 0 ~ -100
+                testModePowerLeft += TEST_STEP;
+                testModePowerRight -= TEST_STEP;
+                if ( (100 < testModePowerLeft) || (testModePowerRight < -100) )
+                {
+                    testModePowerLeft = 100;
+                    testModePowerRight = -100;
+                    testMode = LEFT_FORWARD_RIGHT_BACKWARD_DOWN;
+                }
+                break;
+
+            case LEFT_FORWARD_RIGHT_BACKWARD_DOWN:
+                // Left +100 ~ 0, Right -100 ~ 0
+                testModePowerLeft -= TEST_STEP;
+                testModePowerRight += TEST_STEP;
+                if ( (testModePowerLeft < 0) || (0 < testModePowerRight) )
+                {
+                    testModePowerLeft = 0;
+                    testModePowerRight = 0;
+                    testMode = LEFT_BACKWARD_RIGHT_FORWARD_UP;
+                }
+                break;
+
+            case LEFT_BACKWARD_RIGHT_FORWARD_UP:
+                // Left 0 ~ -100, Right 0 ~ +100
+                testModePowerLeft -= TEST_STEP;
+                testModePowerRight += TEST_STEP;
+                if ( (testModePowerLeft < -100) || (100 < testModePowerRight) )
+                {
+                    testModePowerLeft = -100;
+                    testModePowerRight = 100;
+                    testMode = LEFT_BACKWARD_RIGHT_FORWARD_DOWN;
+                }
+                break;
+
+            case LEFT_BACKWARD_RIGHT_FORWARD_DOWN:
+                // Left -100 ~ 0, Right +100 ~ 0
+                testModePowerLeft += TEST_STEP;
+                testModePowerRight -= TEST_STEP;
+                if ( (0 < testModePowerLeft) || ( testModePowerRight < 0) )
+                {
+                    testModePowerLeft = 0;
+                    testModePowerRight = 0;
+                    testMode = LEFT_FORWARD_RIGHT_BACKWARD_UP;
+                }
+                break;
+            default:
+                testMode = LEFT_FORWARD_RIGHT_BACKWARD_UP;
+                break;
         }
     }
     else
     {
         testCnt++;
     }
-    if (reverseMode == true)
-    {
-        motorsDrive((float)testCnt2 / 100.0f, (float)-testCnt2 / 100.0f);
-    }
-    else
-    {
-        motorsDrive((float)-testCnt2 / 100.0f, (float)testCnt2 / 100.0f);
-    }
+    motorsDrive((float)testModePowerLeft / 100.0f, (float)testModePowerRight/ 100.0f);
     motorsReadPower(&pwrL, &pwrR);
     motorsReadRound(&roundL, &roundR);
     motorsReadRps(&rpsL, &rpsR);
@@ -355,8 +371,8 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
     //         "cnt = %d, pwrL,R = %f,%f, rpsL,R = %f,%f, roundL,R = %f,%f",
     //         testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
     return snprintf(strBuffer, maxBufferSize,
-            ",%d,%f,%f,%f,%f,%f,%f",
-            testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
+            ",%d,%d,%f,%f,%f,%f,%f,%f",
+            testMode, testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
 }
 #else /* __ENCODER_TEST__ */
 uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
@@ -381,7 +397,6 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
     }
     return snprintf(strBuffer, maxBufferSize,"ENCTEST END");
 }
-
 #endif /* __ENCODER_TEST__ */
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
