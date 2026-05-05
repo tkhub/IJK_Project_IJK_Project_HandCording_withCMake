@@ -142,6 +142,8 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
     int cnt = 0;
+    uint8_t i2c_test_writeData[16];
+    uint8_t i2c_test_readData[16];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -189,8 +191,19 @@ int main(void)
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2_DMA_data, 4);
 
   // I2C start
-
-
+  #define ICM42688P_ADDRESS (0x69)
+  i2c_test_writeData[0] = 0x75;
+  HAL_I2C_Master_Transmit_DMA(&hi2c1, ICM42688P_ADDRESS << 1, i2c_test_writeData, 1);
+  HAL_Delay(10);
+  HAL_I2C_Master_Receive_DMA(&hi2c1, ICM42688P_ADDRESS << 1, i2c_test_readData, 1);
+  if (i2c_test_readData[0] == 0x47)
+  {
+    printf("ICM42688P returned WHO_AM_I = 0x%02X\r\n", i2c_test_readData[0]);
+  }
+  else
+  {
+    printf("Failed to read ICM42688P WHO_AM_I, got 0x%02X\r\n", i2c_test_readData[0]);
+  }
   //motor start
 
   HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
