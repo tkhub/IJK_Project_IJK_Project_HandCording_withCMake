@@ -16,7 +16,7 @@ extern "C" {
 /*========VVVV MACRO Definition START VVVV===================================*/
 
 //! SACデバッグ時はコメントアウトを解除。同時に複数は使わないこと
-#define _ENABLE_SAC_TEST_   //! SACレイヤーのテスト・デバッグ用のスイッチ
+// #define _ENABLE_SAC_TEST_   //! SACレイヤーのテスト・デバッグ用のスイッチ
 
 #ifdef _ENABLE_SAC_TEST_
     #define DEBUGMODE_UISW_TEST         1                       //! UISWのテスト・デバッグ用のスイッチ

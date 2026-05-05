@@ -71,7 +71,7 @@ volatile static uint16_t testCnt;
 volatile static int16_t testModePowerLeft;
 volatile static int16_t testModePowerRight;
 static const uint16_t TEST_HOLD_TIME_MS = (uint16_t)((float)(5.0F)/(50.0F * 0.001F));
-static const uint8_t TEST_STEP = 20;
+static const uint8_t TEST_STEP = 5;
 typedef enum {
     LEFT_FORWARD_RIGHT_BACKWARD_UP,
     LEFT_FORWARD_RIGHT_BACKWARD_DOWN,
