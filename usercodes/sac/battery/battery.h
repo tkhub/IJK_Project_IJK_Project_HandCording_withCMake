@@ -100,7 +100,7 @@ batterystatus_t batteryReadStateatus(void);
  */
 uint8_t batteryState2String(batterystatus_t btst, char * str);
 
-#ifdef _ENABLE_BATTERY_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST
 /**
  * @brief バッテリーテスト・デバッグ用関数
  * @param [in/out] 文字列格納先のアドレス
@@ -108,7 +108,7 @@ uint8_t batteryState2String(batterystatus_t btst, char * str);
  * @return 生成した文字列のサイズ
  */
 uint8_t batteryTest(char* strBuffer, uint8_t maxBufferSize);
-#endif /* _ENABLE_BATTERY_TEST_ */
+#endif /* SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST */
 /*========AAAA GLOBAL Function Declaration END AAAA==========================*/
 
 #ifdef __cplusplus

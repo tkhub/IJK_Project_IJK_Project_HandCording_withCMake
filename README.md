@@ -3,7 +3,10 @@
  
 # Requirement
 ## Software
-* STM32CubeIDE
+* STM32CubeMX
+* VSCode
+* [STM32 VS code extension](https://www.st.com/content/st_com/ja/campaigns/stm32-vs-code-extension-z11.html)
+  
 ## Hardware
 キットをベースに以下の改造を実施。
 ### 意図しないタイヤの回転を抑制

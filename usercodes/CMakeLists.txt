@@ -3,6 +3,8 @@ file(GLOB USER_SOURCES
     "sac/*.c"
     "sac/*/*.c"
     "common/*.c"
+    "app/*.c"
+    "app/*/*.c"
 )
 
 # usercodes内のヘッダーファイル検索パスを追加

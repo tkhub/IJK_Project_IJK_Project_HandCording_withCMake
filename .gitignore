@@ -3,7 +3,7 @@
 .mxproject
 .project
 /.settings/
-
+.vscode
 
 
 # OBJ file
@@ -30,3 +30,6 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 build.ninja
+
+# debug logs
+testlogs/

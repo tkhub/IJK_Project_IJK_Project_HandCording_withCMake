@@ -95,34 +95,22 @@ int testFunc(int* buffer, int size) {
 */
 void sacLoop(void) {
 
-#ifdef _ENABLE_SAC_TEST_
-    static char teststr[200];
-
-#ifdef _ENABLE_UISW_TEST_
-    uiswTest(teststr, 160);
-    //puts(teststr);
-
-#endif /* _ENABLE_UISW_TEST_ */
-
-#ifdef _ENABLE_MOTOR_TEST_
-    motorTest(teststr, 160);
-#endif /* _ENABLE_MOTOR_TEST_ */
-
-#ifdef _ENABLE_BUZZER_TEST_
-    buzzerTest(teststr, 160);
-#endif /* _ENABLE_BUZZER_TEST_ */
-
-#ifdef _ENABLE_LINEMKR_TEST_
-    linmkrssrTest(teststr, 200);
-#endif /* _ENABLE_LINEMKR_TEST_ */
-
-#ifdef _ENABLE_BATTERY_TEST_
-    batteryTest(teststr, 200);
-#endif /* _ENABLE_BATTERY_TEST_ */
-
-    printf("%d\t%s\r\n", testcnt, teststr);
-    testcnt++;
-#endif /* _ENABLE_SAC_TEST_ */
+    #ifdef _ENABLE_SAC_TEST_
+        static char teststr[200];
+        #if SAC_DEBUGMODE == DEBUGMODE_UISW_TEST
+            uiswTest(teststr, 160);
+        #elif SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
+            motorTest(teststr, 160);
+        #elif SAC_DEBUGMODE == DEBUGMODE_BUZZER_TEST
+            buzzerTest(teststr, 160);
+        #elif SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST
+            linmkrssrTest(teststr, 200);
+        #elif SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST
+            batteryTest(teststr, 200);
+        #endif /* DEBUGMODE_UISW_TEST */
+        printf("%d\t%s\r\n", testcnt, teststr);
+        testcnt++;
+    #endif /* _ENABLE_SAC_TEST_ */
 
 }
 

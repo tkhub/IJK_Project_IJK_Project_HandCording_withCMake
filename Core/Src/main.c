@@ -30,6 +30,7 @@
 #include <stdio.h>
 
 #include "../../usercodes/sac/sac.h"
+#include "../../usercodes/app/app.h"
 
 
 /* USER CODE END Includes */
@@ -219,7 +220,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      sacLoop();
+    sacLoop();
+    appMainLoop();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -289,6 +291,7 @@ void timerInterruptHandler_1msA(void) {
 
 void timerInterruptHandler_1msB(void) {
     motorsControl_1ms();
+    appIntervalHandler_1ms();
 }
 
 void timerInterruptHandler_10msA(void) {
@@ -298,6 +301,7 @@ void timerInterruptHandler_10msA(void) {
 
 void timerInterruptHandler_10msB(void) {
     battery_10ms();
+    appIntervalHandler_10ms();
 }
 /* USER CODE END 4 */
 

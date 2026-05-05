@@ -52,7 +52,7 @@ void markersensorsMeasure_1ms(void);
 void markersensorsDebug(uint16_t rawVal[2]);
 uint8_t markersensorsRead(void);
 
-#ifdef _ENABLE_LINEMKR_TEST_
+#if SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST
 /**
  * @brief ラインセンサ・マーカセンサのデバッグ用関数
  * @param [out] strBuffer printfデバッグ用の文字列格納先
@@ -60,7 +60,7 @@ uint8_t markersensorsRead(void);
  * @return 生成した文字列の長さ
  */
 uint8_t linmkrssrTest(char* strBuffer, uint8_t maxBufferSize);
-#endif /* _ENABLE_LINEMKR_TEST_*/
+#endif /* SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST */
 
 /*========AAAA GLOBAL Function Declaration END AAAA==========================*/
 
