@@ -31,6 +31,7 @@
 
 #include "../../usercodes/sac/sac.h"
 #include "../../usercodes/app/app.h"
+#include "../../usercodes/service/i2cmn/i2c_manager.h"
 
 
 /* USER CODE END Includes */
@@ -131,6 +132,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     }
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
 }
+
+void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
+
+}
+
+void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -191,19 +200,19 @@ int main(void)
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2_DMA_data, 4);
 
   // I2C start
-  #define ICM42688P_ADDRESS (0x69)
-  i2c_test_writeData[0] = 0x75;
-  HAL_I2C_Master_Transmit_DMA(&hi2c1, ICM42688P_ADDRESS << 1, i2c_test_writeData, 1);
-  HAL_Delay(10);
-  HAL_I2C_Master_Receive_DMA(&hi2c1, ICM42688P_ADDRESS << 1, i2c_test_readData, 1);
-  if (i2c_test_readData[0] == 0x47)
-  {
-    printf("ICM42688P returned WHO_AM_I = 0x%02X\r\n", i2c_test_readData[0]);
-  }
-  else
-  {
-    printf("Failed to read ICM42688P WHO_AM_I, got 0x%02X\r\n", i2c_test_readData[0]);
-  }
+  // #define ICM42688P_ADDRESS (0x69)
+  // i2c_test_writeData[0] = 0x75;
+  // HAL_I2C_Master_Transmit_DMA(&hi2c1, ICM42688P_ADDRESS << 1, i2c_test_writeData, 1);
+  // HAL_Delay(10);
+  // HAL_I2C_Master_Receive_DMA(&hi2c1, ICM42688P_ADDRESS << 1, i2c_test_readData, 1);
+  // if (i2c_test_readData[0] == 0x47)
+  // {
+  //   printf("ICM42688P returned WHO_AM_I = 0x%02X\r\n", i2c_test_readData[0]);
+  // }
+  // else
+  // {
+  //   printf("Failed to read ICM42688P WHO_AM_I, got 0x%02X\r\n", i2c_test_readData[0]);
+  // }
   //motor start
 
   HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
@@ -213,6 +222,7 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 
 
+  i2cmanagerInit();
   /// SAC INIT
   uiswInit(uisw_event_buffer, sizeof(uisw_event_buffer)/sizeof(uisw_event_buffer[0]));
   buzzerInit(buzzerScheduleBuffer, sizeof(buzzerScheduleBuffer)/sizeof(buzzerScheduleBuffer[0]));
@@ -234,6 +244,7 @@ int main(void)
   while (1)
   {
     sacLoop();
+    i2cmanagerMainloop();
     appMainLoop();
     /* USER CODE END WHILE */
 
@@ -300,11 +311,13 @@ void timerInterruptHandler_500us(void) {
 void timerInterruptHandler_1msA(void) {
     linesensorsMeasure_1ms();
     markersensorsMeasure_1ms();
+    i2cmanagerControl_1ms_A();
 }
 
 void timerInterruptHandler_1msB(void) {
     motorsControl_1ms();
     appIntervalHandler_1ms();
+    i2cmanagerControl_1ms_B();
 }
 
 void timerInterruptHandler_10msA(void) {

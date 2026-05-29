@@ -5,12 +5,16 @@ file(GLOB USER_SOURCES
     "common/*.c"
     "app/*.c"
     "app/*/*.c"
+    "service/*.c"
+    "service/*/*.c"
 )
 
 # usercodes内のヘッダーファイル検索パスを追加
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/common
     ${CMAKE_CURRENT_SOURCE_DIR}/sac
+    ${CMAKE_CURRENT_SOURCE_DIR}/service
+    ${CMAKE_CURRENT_SOURCE_DIR}/app
 )
 
 # ソースをルートプロジェクトのターゲットに追加
