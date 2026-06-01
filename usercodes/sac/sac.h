@@ -18,6 +18,7 @@
 #include "buzzer/buzzer.h"
 #include "linmkrssr/linmkrssr.h"
 #include "battery/battery.h"
+#include "imu/imu.h"
 
 /*========AAAA Include Local Header END AAAA=================================*/
 

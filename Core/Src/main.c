@@ -31,6 +31,7 @@
 
 #include "../../usercodes/sac/sac.h"
 #include "../../usercodes/app/app.h"
+#include "../../usercodes/service/i2cmn/i2c_manager.h"
 
 
 /* USER CODE END Includes */
@@ -131,6 +132,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     }
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -188,9 +190,6 @@ int main(void)
   HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC1_DMA_data, 3);
   HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2_DMA_data, 4);
 
-  // I2C start
-
-
   //motor start
 
   HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
@@ -200,6 +199,7 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 
 
+  i2cmanagerInit();
   /// SAC INIT
   uiswInit(uisw_event_buffer, sizeof(uisw_event_buffer)/sizeof(uisw_event_buffer[0]));
   buzzerInit(buzzerScheduleBuffer, sizeof(buzzerScheduleBuffer)/sizeof(buzzerScheduleBuffer[0]));
@@ -221,6 +221,7 @@ int main(void)
   while (1)
   {
     sacLoop();
+    i2cmanagerMainloop();
     appMainLoop();
     /* USER CODE END WHILE */
 
@@ -287,11 +288,14 @@ void timerInterruptHandler_500us(void) {
 void timerInterruptHandler_1msA(void) {
     linesensorsMeasure_1ms();
     markersensorsMeasure_1ms();
+    i2cmanagerControl_1ms_A();
+    imuMeasure_1ms();
 }
 
 void timerInterruptHandler_1msB(void) {
     motorsControl_1ms();
     appIntervalHandler_1ms();
+    i2cmanagerControl_1ms_B();
 }
 
 void timerInterruptHandler_10msA(void) {

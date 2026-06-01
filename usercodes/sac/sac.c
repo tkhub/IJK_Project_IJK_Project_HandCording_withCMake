@@ -107,6 +107,8 @@ void sacLoop(void) {
             linmkrssrTest(teststr, 200);
         #elif SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST
             batteryTest(teststr, 200);
+        #elif SAC_DEBUGMODE == DEBUGMODE_IMU_TEST
+            imuTest(teststr, 180);
         #endif /* DEBUGMODE_UISW_TEST */
         printf("%d\t%s\r\n", testcnt, teststr);
         testcnt++;
