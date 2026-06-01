@@ -1,6 +1,6 @@
 /**
  * @file imu_const.c
- * @brief 
+ * @brief IMU定数の定義
  * @author takap
  * @date Nov 30, 2025
  * @Version 0.00
@@ -18,22 +18,25 @@
 /*========AAAA MACRO Definition END AAAA=====================================*/
 
 /*========VVVV GLOBAL Variable Definition START VVVV=========================*/
-/* int global_var; */ /* ヘッダファイルで説明済みのためDoxygenのコメントは不要 */
-const imu_correction_params_t IMU_CORRECTION_PARAMS = {
-    .gyroXYZ = {
-        {1.0f, 0.0f},
-        {1.0f, 0.0f},
-        {1.0f, 0.0f}
+const imu_correction_params_t IMU_CORRECTION_PARAMS =
+{
+    .accel =
+    {
+        .X = { .gain = 0.0F, .offset = 0.0F },
+        .Y = { .gain = 0.0F, .offset = 0.0F },
+        .Z = { .gain = 0.0F, .offset = 0.0F }
     },
-    .accelXYZ = {
-        {1.0f, 0.0f},
-        {1.0f, 0.0f},
-        {1.0f, 0.0f}
+    .gyro =
+    {
+        .ROLL = { .gain = 0.0F, .offset = 0.0F },
+        .PITCH = { .gain = 0.0F, .offset = 0.0F },
+        .YAW = { .gain = 0.0F, .offset = 0.0F }
     }
 };
 const float IMU_ACCEL_LPF_GAIN = 1.0F;
 const float IMU_GYRO_LPF_GAIN = 1.0F;;
 const float IMU_TEMP_LPF_GAIN = 0.05F;
+
 const float IMU_ACCEL_CONVERSION_GAIN = 1.0F/2048.0F;
 const float IMU_GYRO_CONVERSION_GAIN = 1.04F/16.4F;
 const float IMU_TEMP_CONVERSION_GAIN = 1.0F/132.48F;

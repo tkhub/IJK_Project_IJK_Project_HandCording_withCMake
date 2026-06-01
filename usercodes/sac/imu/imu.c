@@ -86,12 +86,14 @@ static float imuLPF(float current_value, float new_value, float gain);
 /**
  * @brief IMU用の補正関数
  * 
- * @param raw_value 生値(float)
+ * @param base_value 補正前の値 
+ * @param temp 温度
  * @param gain ゲイン
  * @param offset オフセット
  * @return float 補正後の値
+ * @details 温度補正値で補正前の値を差し引く
  */
-static float imuCorrection(float raw_value, float gain, float offset);
+static float imuCorrection(float base_value, float temp, float gain, float offset);
 
 
 /*========AAAA Private Function Prototype Declaration END AAAA===============*/
@@ -128,32 +130,35 @@ void imuMeasure_ReciveEnd(void)
 void imuMeasure_1ms(void)
 {
     //! TODO:温度補正処理未実装
-    imu_temp_data = imuLPF(imu_temp_data, imuCorrection((float)imu_temp_rawdata, IMU_TEMP_CONVERSION_GAIN, IMU_TEMP_CONVERSION_OFFSET), IMU_TEMP_LPF_GAIN);
+    imu_temp_data = imuLPF(
+                imu_temp_data,
+                (((float)imu_temp_rawdata * IMU_TEMP_CONVERSION_GAIN ) + IMU_TEMP_CONVERSION_OFFSET),
+                IMU_TEMP_LPF_GAIN);
     
     imu_data.accel.x = imuLPF(
                                 imu_data.accel.x,
-                                imuCorrection((float)imu_accel_rawdatas[0], IMU_ACCEL_CONVERSION_GAIN, 0.0F),
+                                imuCorrection( (float)imu_accel_rawdatas[0] * IMU_ACCEL_CONVERSION_GAIN, imu_temp_data, IMU_CORRECTION_PARAMS.accel.X.gain, IMU_CORRECTION_PARAMS.accel.X.offset),
                                 IMU_ACCEL_LPF_GAIN);
     imu_data.accel.y = imuLPF(
                                 imu_data.accel.y,
-                                imuCorrection((float)imu_accel_rawdatas[1], IMU_ACCEL_CONVERSION_GAIN, 0.0F),
+                                imuCorrection((float)imu_accel_rawdatas[1] * IMU_ACCEL_CONVERSION_GAIN, imu_temp_data, IMU_CORRECTION_PARAMS.accel.Y.gain, IMU_CORRECTION_PARAMS.accel.Y.offset),
                                 IMU_ACCEL_LPF_GAIN);
     imu_data.accel.z = imuLPF(
                                 imu_data.accel.z,
-                                imuCorrection((float)imu_accel_rawdatas[2], IMU_ACCEL_CONVERSION_GAIN, 0.0F),
+                                imuCorrection((float)imu_accel_rawdatas[2] * IMU_ACCEL_CONVERSION_GAIN, imu_temp_data, IMU_CORRECTION_PARAMS.accel.Z.gain, IMU_CORRECTION_PARAMS.accel.Z.offset),
                                 IMU_ACCEL_LPF_GAIN);
 
     imu_data.gyro.roll = imuLPF(
                                 imu_data.gyro.roll,
-                                imuCorrection((float)imu_gyro_rawdatas[0], IMU_GYRO_CONVERSION_GAIN, 0.0F),
+                                imuCorrection((float)imu_gyro_rawdatas[0] * IMU_GYRO_CONVERSION_GAIN, imu_temp_data, IMU_CORRECTION_PARAMS.gyro.ROLL.gain, IMU_CORRECTION_PARAMS.gyro.ROLL.offset),
                                 IMU_GYRO_LPF_GAIN);
     imu_data.gyro.pitch = imuLPF(
                                 imu_data.gyro.pitch,
-                                imuCorrection((float)imu_gyro_rawdatas[1], IMU_GYRO_CONVERSION_GAIN, 0.0F),
+                                imuCorrection((float)imu_gyro_rawdatas[1] * IMU_GYRO_CONVERSION_GAIN, imu_temp_data, IMU_CORRECTION_PARAMS.gyro.PITCH.gain, IMU_CORRECTION_PARAMS.gyro.PITCH.offset),
                                 IMU_GYRO_LPF_GAIN);
     imu_data.gyro.yaw = imuLPF(
                                 imu_data.gyro.yaw,
-                                imuCorrection((float)imu_gyro_rawdatas[2], IMU_GYRO_CONVERSION_GAIN, 0.0F),
+                                imuCorrection((float)imu_gyro_rawdatas[2] * IMU_GYRO_CONVERSION_GAIN, imu_temp_data, IMU_CORRECTION_PARAMS.gyro.YAW.gain, IMU_CORRECTION_PARAMS.gyro.YAW.offset),
                                 IMU_GYRO_LPF_GAIN);
 }
 
@@ -181,9 +186,9 @@ static float imuLPF(float current_value, float new_value, float gain)
     return (new_value - current_value) * gain + current_value;
 }
 
-static float imuCorrection(float raw_value, float gain, float offset)
+static float imuCorrection(float base_value, float temp, float gain, float offset)
 {
-    return (raw_value * gain) + offset;
+    return (base_value - (temp * gain + offset));
 }
 
 /*========AAAA Private Function Definition END AAAA==========================*/

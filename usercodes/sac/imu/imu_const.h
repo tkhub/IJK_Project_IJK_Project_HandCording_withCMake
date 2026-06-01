@@ -20,15 +20,35 @@ extern "C" {
 /*========AAAA Include Local Header END AAAA=================================*/
 
 /*========VVVV Typedef Definition START VVVV=================================*/
+
+/**
+ * @brief 温度補正用の構造体
+ * 
+ */
 typedef struct
 {
-    float gain;
-    float offset;
+    float gain;     //! 温度補正ゲイン
+    float offset;   //! 温度補正オフセット
 }imu_correction_param_t;
+
+/**
+ * @brief 6軸分の補正構造体
+ * 
+ */
 typedef struct
 {
-    imu_correction_param_t gyroXYZ[3];
-    imu_correction_param_t accelXYZ[3];
+    struct
+    {
+        imu_correction_param_t X;
+        imu_correction_param_t Y;
+        imu_correction_param_t Z;
+    }accel;                                 //! 加速度センサの各軸補正値
+    struct
+    {
+        imu_correction_param_t ROLL;
+        imu_correction_param_t PITCH;
+        imu_correction_param_t YAW;
+    }gyro;                                  //! 角速度センサの各軸補正値
 }imu_correction_params_t;
 /*========AAAA Typedef Definition END AAAA===================================*/
 
