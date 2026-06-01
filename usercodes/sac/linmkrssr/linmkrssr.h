@@ -33,23 +33,79 @@ extern "C" {
 
 /*========VVVV GLOBAL Function Declaration START VVVV========================*/
 /**
- * @brief テスト関数
- * @param [in/out] buffer バッファ
- * @param [in] size バッファのサイズ
- * @return 戻り値の説明
- * @detail 詳細な説明
+ * @brief 初期化関数
+ * @param [in] plls 左端ラインセンサのDMAデータ格納先バッファ
+ * @param [in] plcs 左中央ラインセンサのDMAデータ格納先バッファ
+ * @param [in] prcs 右中央ラインセンサのDMAデータ格納先バッファ
+ * @param [in] prrs 右端ラインセンサのDMAデータ格納先バッファ
+ * @details 各センサのポインタの登録と、内部のセンサキャリブレーションを行う。
  */
 void linesensorsInit(volatile uint16_t* plls, volatile uint16_t* plcs, volatile uint16_t* prcs, volatile uint16_t* prrs);
+
+/**
+ * @brief ラインセンサキャリブレーション関数
+ * 
+ * @param llsw :左端ラインセンサの白値
+ * @param llsb :左端ラインセンサの黒値
+ * @param lcsw :左中央ラインセンサの白値
+ * @param lcsb :左中央ラインセンサの黒値
+ * @param rcsw :右中央ラインセンサの白値
+ * @param rcsb :右中央ラインセンサの黒値
+ * @param rrsw :右端ラインセンサの白値
+ * @param rrsb :右端ラインセンサの黒値
+ */
 void linesensorsCalibration(const uint16_t llsw, const uint16_t llsb, const uint16_t lcsw, const uint16_t lcsb, const uint16_t rcsw, const uint16_t rcsb, const uint16_t rrsw, const uint16_t rrsb);
+
+/**
+ * @brief ラインセンサの1ms周期関数
+ * @brief ラインセンサのAD値をフィルタしたり、白黒判定したりする。
+ */
 void linesensorsMeasure_1ms(void);
-void linesensorsDebug(uint16_t rawVal[4], float nrmVal[4]);
+
+/**
+ * @brief ラインセンサの中央からの偏差計測関数
+ * 
+ * @return float ラインセンサのズレ(左にズレたらマイナス)[mm]
+ * @details ラインセンサの正規化した値を元に、重心計算を行いラインセンサのズレ量を算出する。色ムラ等の外乱の影響は受ける。
+ */
 float linesensorsReadPosition(void);
+
+/**
+ * @brief ラインセンサの白黒判定結果読み取り関数
+ * 
+ * @return uint8_t 4bit目から順に、左端のセンサから右端のセンサの白黒判定値を格納。1なら白。0なら黒。
+ */
 uint8_t linesensorsReadBin(void);
 
+/**
+ * @brief マーカーセンサの初期化関数
+ * 
+ * @param [in] mkl 左マーカーセンサのDMAデータ格納先のポインタ
+ * @param [in] mkr 右マーカーセンサのDMAデータ格納先のポインタ
+ */
 void markersensorsInit(volatile uint16_t* mkl, volatile uint16_t* mkr);
+
+/**
+ * @brief マーカーセンサのキャリブレーション関数
+ * 
+ * @param mklw 左マーカーセンサの白値
+ * @param mklb 左マーカーセンサの黒値
+ * @param mkrw 右マーカーセンサの白値
+ * @param mkrb 右マーカーセンサの黒値
+ */
 void markersensorsCalibration(const uint16_t mklw, const uint16_t mklb, const uint16_t mkrw, const uint16_t mkrb);
+
+/**
+ * @brief マーカーセンサの1ms周期関数
+ * @brief 各マーカーセンサのAD値をフィルタしたり、白黒判定する。
+ */
 void markersensorsMeasure_1ms(void);
-void markersensorsDebug(uint16_t rawVal[2]);
+
+/**
+ * @brief マーカーセンサの白黒判定値を読み取る関数
+ * 
+ * @return uint8_t 左マーカーセンサの判定結果が2bit目。右マーカセンサが1bit目。1なら白。0なら黒。
+ */
 uint8_t markersensorsRead(void);
 
 #if SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST

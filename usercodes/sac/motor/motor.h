@@ -23,58 +23,24 @@ extern "C" {
 /*========AAAA Include Local Header END AAAA=================================*/
 
 /*========VVVV Typedef Definition START VVVV=================================*/
-/**
- * @brief ABC_t 型の列挙体
- */
-/**
- * typedef enum {
- *  A,  //! Aの説明
- *  B,  //! Bの説明
- *  C   //! Cの説明
- * } ABC_t;
-*/
-
-/**
- * @brief DEF_t 型の構造体
- */
-/**
- * typedef struct {
- *  int D,  //!  Dの説明
- *  int E,  //!  Eの説明
- *  int F   //!  Fの説明
- * } DEF_t;
-*/
-
 /*========AAAA Typedef Definition END AAAA===================================*/
 
 /*========VVVV MACRO Definition START VVVV===================================*/
-/** 
- * @brief マクロ MAX_NANK の説明
- */
-/* # define MAX_NANKA 256 */
-
 /*========AAAA MACRO Definition END AAAA=====================================*/
 
 /*========VVVV GLOBAL Variable Declaration START VVVV========================*/
-/**
- * @brief グローバル変数 lobal_var の説明  
-*/
-/**
- * extern int global_var;
-*/
-
 /*========AAAA GLOBAL Variable Declaration END AAAA==========================*/
 
 /*========VVVV GLOBAL Function Declaration START VVVV========================*/
 /**
  * @brief 初期化関数
- * @detail モータを停止し、エンコーダのカウントをリセットする。
+ * @details モータを停止し、エンコーダのカウントをリセットする。
  */
 void motorsInit(void);
 
 /**
  * @brief モータ制御
- * @detail エンコーダ処理とモータ出力の更新を行う。
+ * @details エンコーダ処理とモータ出力の更新を行う。
  */
 void motorsControl_1ms(void);
 

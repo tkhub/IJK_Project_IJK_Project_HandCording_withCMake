@@ -65,20 +65,20 @@ typedef enum {
  * @brief UISW初期化関数
  * @param [in] buffer 確保してもらったUISWキューバッファの先頭アドレス
  * @param [in] buffersize 確保してもらったUISWキューバッファのサイズ
- * @detail UISWキューの初期化。領域は呼び出し元に確保してもらう。
+ * @details UISWキューの初期化。領域は呼び出し元に確保してもらう。
  */
 void uiswInit(volatile uiswevent_t* buffer, uint8_t buffersize);
 
 /**
  * @brief UISWポーリング関数
- * @detail UISWキューの操作。スイッチ状態は新しい順にキューに格納され、古いものは削除される。
+ * @details UISWキューの操作。スイッチ状態は新しい順にキューに格納され、古いものは削除される。
  */
 void uisw_10ms(void);
 
 /**
  * @brief UISWキューの読み出し
  * @return UISWのイベント
- * @detail NON_UISW_EVENT以外が発生するとキューに保持される。キューから古い順にイベントが読み出され、削除される。
+ * @details NON_UISW_EVENT以外が発生するとキューに保持される。キューから古い順にイベントが読み出され、削除される。
  */
 uiswevent_t uiswRead(void);
 

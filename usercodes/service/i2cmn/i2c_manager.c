@@ -4,7 +4,7 @@
  * @author takap
  * @date Nov 30, 2025
  * @Version 0.00
- * @detail 一本のI2C通信バスから複数のデバイスの送受信を管理するモジュール
+ * @details 一本のI2C通信バスから複数のデバイスの送受信を管理するモジュール
  */
 
 /*========VVVV Include Standard Header START VVVV============================*/

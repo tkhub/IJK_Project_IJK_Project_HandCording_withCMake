@@ -93,7 +93,7 @@ typedef struct marker_param_st marker_param_t;
  * @param [in/out] buffer バッファ
  * @param [in] size バッファのサイズ
  * @return 戻り値の説明
- * @detail 詳細な説明
+ * @details 詳細な説明
  */
 /**
  * int testFunc(int* buffer, int size)

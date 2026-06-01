@@ -64,13 +64,13 @@ extern const uint16_t   RRSSR_DEFAULT_BLACK;
 
 /**
  * @brief 正規化されたラインセンサの白判定しきい値。WHITEとBLACKとの差に対する割合で規定
- * @detail 生値はセンサごとにばらつくため、正規化した値(黒を0.0、白を1.0とした場合に対する割合）で規定する
+ * @details 生値はセンサごとにばらつくため、正規化した値(黒を0.0、白を1.0とした場合に対する割合）で規定する
  */
 extern const float      LINESENSOR_THRESHOLD;
 
 /**
  * @brief 正規化されたラインセンサのヒステリシス。黒判定しきい値は白判定しきい値からこの値を差し引いた値
- * @detail 生値はセンサごとにばらつくため、正規化した値(黒を0.0、白を1.0とした場合に対する割合）で規定する
+ * @details 生値はセンサごとにばらつくため、正規化した値(黒を0.0、白を1.0とした場合に対する割合）で規定する
  */
 extern const float      LINESENSOR_HYSTERESIS;
 

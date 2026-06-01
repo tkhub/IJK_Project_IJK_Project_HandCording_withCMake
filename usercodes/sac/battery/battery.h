@@ -27,13 +27,6 @@ extern "C" {
  * @brief バッテリー状態を表現するbatterystatus_t 型の列挙体
  *
  */
-/**
- * typedef enum {
- *  A,  //! Aの説明
- *  B,  //! Bの説明
- *  C   //! Cの説明
- * } ABC_t;
-*/
 typedef enum {
     BATTERY_NON_DETECTED,   //! 未判定
     BATTERY_LO_ERROR,       //! エラー状態(Lo)

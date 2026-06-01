@@ -68,29 +68,29 @@ void SystemClock_Config(void);
 
 /**
  * @brief 500usタイマーハンドラA
- * @detail タイマー割り込み内で実施
+ * @details タイマー割り込み内で実施
  */
 void timerInterruptHandler_500us(void);
 
 /**
  * @brief 1msタイマーハンドラA
- * @detail タイマー割り込み内で実施
+ * @details タイマー割り込み内で実施
  */
 void timerInterruptHandler_1msA(void);
 /**
  * @brief 1msタイマーハンドラB
- * @detail タイマー割り込み内で実施
+ * @details タイマー割り込み内で実施
  */
 void timerInterruptHandler_1msB(void);
 
 /**
  * @brief 10msタイマーハンドラA
- * @detail タイマー割り込み内で実施
+ * @details タイマー割り込み内で実施
  */
 void timerInterruptHandler_10msA(void);
 /**
  * @brief 10msタイマーハンドラB
- * @detail タイマー割り込み内で実施
+ * @details タイマー割り込み内で実施
  */
 void timerInterruptHandler_10msB(void);
 
@@ -293,9 +293,9 @@ void timerInterruptHandler_1msA(void) {
 }
 
 void timerInterruptHandler_1msB(void) {
-    motorsControl_1ms();
-    appIntervalHandler_1ms();
     i2cmanagerControl_1ms_B();
+    appIntervalHandler_1ms();
+    motorsControl_1ms();
 }
 
 void timerInterruptHandler_10msA(void) {

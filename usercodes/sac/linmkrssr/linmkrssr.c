@@ -69,7 +69,7 @@ volatile static marker_param_t markerSensorsParam[2];
  * @param [in] white 白判定時の値
  * @param [in] black 黒判定時の値
  * @return ゲイン
- * @detail センサのAD値を0.0～1.0に変換するためのゲインを求める。オフセットを求めるnrmOffsetとセットで使う
+ * @details センサのAD値を0.0～1.0に変換するためのゲインを求める。オフセットを求めるnrmOffsetとセットで使う
  */
 static float nrmGain(uint16_t white, uint16_t black);
 
@@ -78,7 +78,7 @@ static float nrmGain(uint16_t white, uint16_t black);
  * @param [in] gain 正規化ゲイン
  * @param [in] black 黒判定時の値
  * @return オフセット
- * @detail センサのAD値を0.0～1.0に変換するためのオフセットを求める。ゲインを求めるnrmGainとセットで使う
+ * @details センサのAD値を0.0～1.0に変換するためのオフセットを求める。ゲインを求めるnrmGainとセットで使う
  */
 static float nrmOffset(float gain, uint16_t black);
 
@@ -88,7 +88,7 @@ static float nrmOffset(float gain, uint16_t black);
  * @param [in] black 黒判定時の値
  * @param [in] nrmth 正規化されたしきい値
  * @return しきい値
- * @detail 正規化(0.0～1.0)されたしきい値から、各センサの白黒検出値のばらつきに合わせたしきい値を算出する
+ * @details 正規化(0.0～1.0)されたしきい値から、各センサの白黒検出値のばらつきに合わせたしきい値を算出する
  */
 static uint16_t wb2threshold(uint16_t white, uint16_t black, float nrmth);
 
@@ -100,7 +100,7 @@ static uint16_t wb2threshold(uint16_t white, uint16_t black, float nrmth);
  * @param [in] nmax 正規化値の最大値
  * @param [in] nmin 正規化値の最小値
  * @return 正規化された検出値
- * @detail 正規化された値はnmax～nminの範囲内にリミットされる
+ * @details 正規化された値はnmax～nminの範囲内にリミットされる
  */
 static float normalize(const uint16_t ivalue, const float gain, const float offset, const float nmax, const float nmin);
 
@@ -112,7 +112,7 @@ static float normalize(const uint16_t ivalue, const float gain, const float offs
  * @param [in] nmax 正規化値の最大値
  * @param [in] nmin 正規化値の最小値
  * @return 正規化された検出値
- * @detail ゲインは0.0～1.0の範囲内にリミットされる
+ * @details ゲインは0.0～1.0の範囲内にリミットされる
  */
 static float iirlpf(const float measuredvalue, const float lastvalue, const float gain);
 
@@ -218,17 +218,6 @@ uint8_t linesensorsReadBin(void) {
     return binLinesensors;
 }
 
-void linesensorsDebug(uint16_t rawVal[4], float nrmVal[4]) {
-    rawVal[LL_SSR] =rawLinesensorValues[LL_SSR];
-    rawVal[LC_SSR] =rawLinesensorValues[LC_SSR];
-    rawVal[RC_SSR] =rawLinesensorValues[RC_SSR];
-    rawVal[RR_SSR] =rawLinesensorValues[RR_SSR];
-
-    nrmVal[LL_SSR] = nrmLinesensors[LL_SSR];
-    nrmVal[LC_SSR] = nrmLinesensors[LC_SSR];
-    nrmVal[RC_SSR] = nrmLinesensors[RC_SSR];
-    nrmVal[RR_SSR] = nrmLinesensors[RR_SSR];
-}
 
 void markersensorsInit(volatile uint16_t* mkl, volatile uint16_t* mkr) {
     markersensorDMARaw[MKL_SSR] = mkl;
@@ -256,10 +245,6 @@ void markersensorsMeasure_1ms(void) {
                      ( ( hysteresis(rawMarkersensorValue[MKR_SSR], ((markerDetected & 0x01)),       markerSensorsParam[MKR_SSR].thresholdH, markerSensorsParam[MKR_SSR].thresholdL))          & 0x01);
 }
 
-void markersensorsDebug(uint16_t rawVal[2]) {
-    rawVal[MKL_SSR] = rawMarkersensorValue[MKL_SSR];
-    rawVal[MKR_SSR] = rawMarkersensorValue[MKR_SSR];
-}
 
 uint8_t markersensorsRead(void) {
     return markerDetected;

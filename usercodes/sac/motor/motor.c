@@ -96,7 +96,7 @@ volatile static testMode_t testMode;
  * @param [in] gapth オーバーフローと判定するギャップ
  * @param [in] invertFlag 反転フラグ
  * @return ステップ数
- * @detail 詳細な説明
+ * @details 詳細な説明
  */
 static int32_t encoderCalcStep(const uint16_t now, const uint16_t last, const uint16_t ovfth, const bool invertFlag);
 

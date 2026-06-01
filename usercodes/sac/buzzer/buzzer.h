@@ -25,7 +25,7 @@ extern "C" {
 /*========VVVV Typedef Definition START VVVV=================================*/
 /**
  * @brief buzzerSchedule_t 型の構造体
- * @detail スケジュールするブザーの鳴動パターンを設定するための型
+ * @details スケジュールするブザーの鳴動パターンを設定するための型
  */
 typedef struct {
     uint16_t oncount10ms;
@@ -57,13 +57,13 @@ typedef struct {
  * @brief ブザーの初期化関数
  * @param [in] bzbfr バッファ
  * @param [in] size バッファのサイズ
- * @detail ブザー鳴動用スケジュール用のバッファは初期化元で確保してもらう
+ * @details ブザー鳴動用スケジュール用のバッファは初期化元で確保してもらう
  */
 void buzzerInit(buzzerSchedule_t* bzbfr, uint8_t bzbfrsize);
 
 /**
  * @brief ブザー鳴動実行関数
- * @detail 10msの割り込み内で鳴動スケジュールバッファから鳴動パターンを取り出す
+ * @details 10msの割り込み内で鳴動スケジュールバッファから鳴動パターンを取り出す
  */
 void buzzer_10ms(void);
 
