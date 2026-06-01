@@ -8,16 +8,16 @@
  */
 
 /*========VVVV Include Standard Header START VVVV============================*/
+#include <orgtypedef.h>
 /*========AAAA Include Standard Header END AAAA==============================*/
 
 /*========VVVV Include Local Header START VVVV===============================*/
-#include <orgtypedef.h>
 #include "i2c.h"
-#include "stm32f3xx_hal.h"
+// #include "stm32f3xx_hal.h"
 #include "i2c_manager.h"
 #include "i2c_manager_conf.h"
-#include "stm32f3xx_hal_i2c.h"
-#include <stdio.h>
+#include "../sac/imu/imu.h"
+
 
 /*========AAAA Include Local Header END AAAA=================================*/
 
@@ -67,8 +67,10 @@ static uint8_t ICM42688P_DAT_TBL[3] =
   0x0C  // ICM42688P_REGDATA_IDX_ODR_2KHZ
 };
 
-static uint8_t i2cmanager_gyro_datas[ICM42688P_BURST_READ_SIZE];
+static uint8_t i2cmanager_gyro_datas_dma[ICM42688P_BURST_READ_SIZE];
 static bool i2cmanager_gyro_initialized = false;
+
+static uint8_t i2cmanager_display_buffer[1024];
 
 /*========AAAA Private Variable Definition END AAAA==========================*/
 
@@ -82,52 +84,34 @@ static void i2cmanager_display_Send(void);
 /*========AAAA Private Function Prototype Declaration END AAAA===============*/
 
 /*========VVVV GLOBAL Function Definition START VVVV=========================*/
-/* ヘッダファイルで説明済みのためDoxygenのコメントは不要 */
+//! 初期化関数
 void i2cmanagerInit(void)
 {
     i2cmanager_gyro_initialized =i2cmanager_gyro_Init();
-    // i2cmanager_display_Init();
+    i2cmanager_display_Init();
+    imuInit(i2cmanager_gyro_datas_dma);
 }
 
+
+//! 1ms前半で呼び出される関数
 void i2cmanagerControl_1ms_A(void)
+{
+    i2cmanager_display_Send();
+    imuMeasure_ReciveEnd();
+}
+
+//! 1ms後半で呼び出される関数
+void i2cmanagerControl_1ms_B(void)
 {
     i2cmanager_gyro_Request();
 }
 
-void i2cmanagerControl_1ms_B(void)
-{
-    // i2cmanager_display_Send();
-}
-
+//! メインループで呼び出される関数
 void i2cmanagerMainloop(void)
 {
-    if (!i2cmanager_gyro_initialized)
-    {
-        printf("I2C Gyro Init Failed\r\n");
-    }
-    else
-    {
-        printf("tmp=,%6d,acx=,%6d,acy=,%6d,acz=,%6d,gyx=,%6d,gyy=,%6d,gyz=,%6d\r\n",
-        (uint16_t)((i2cmanager_gyro_datas[0] << 8) | i2cmanager_gyro_datas[1]),
-        (uint16_t)((i2cmanager_gyro_datas[2] << 8) | i2cmanager_gyro_datas[3]),
-        (uint16_t)((i2cmanager_gyro_datas[4] << 8) | i2cmanager_gyro_datas[5]),
-        (uint16_t)((i2cmanager_gyro_datas[6] << 8) | i2cmanager_gyro_datas[7]),
-        (uint16_t)((i2cmanager_gyro_datas[8] << 8) | i2cmanager_gyro_datas[9]),
-        (uint16_t)((i2cmanager_gyro_datas[10] << 8) | i2cmanager_gyro_datas[11]),
-        (uint16_t)((i2cmanager_gyro_datas[12] << 8) | i2cmanager_gyro_datas[13])
-        );
-    }
+    /* NOP */
 }
 
-void i2cmanagerGyroRead(uint16_t* gyroXYZ[3], uint16_t* accelXYZ[3], uint16_t* temp)
-{
-
-}
-
-void i2cmanagerDisplay(uint8_t* buffer, uint8_t size)
-{
-
-}
 
 
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/
@@ -147,28 +131,30 @@ static bool i2cmanager_gyro_Init(void)
     uint8_t writeValue;
 
     // WHO AM I
-    status = HAL_I2C_Mem_Read(&hi2c1,
-                              (ICM42688P_ADDRESS << 1),
-                              ICM42688P_ADDR_TBL[ICM42688P_ADDR_IDX_WHO_AM_I],
-                              I2C_MEMADD_SIZE_8BIT,
-                              &readData,
-                              1,
-                              100);
-    if (status != HAL_OK || readData != ICM42688P_DAT_TBL[ICM42688P_REGDATA_IDX_ACK_OK]) {
+    status = HAL_I2C_Mem_Read(  &hi2c1,
+                                (ICM42688P_ADDRESS << 1),
+                                ICM42688P_ADDR_TBL[ICM42688P_ADDR_IDX_WHO_AM_I],
+                                I2C_MEMADD_SIZE_8BIT,
+                                &readData,
+                                1,
+                                100);
+    if (status != HAL_OK || readData != ICM42688P_DAT_TBL[ICM42688P_REGDATA_IDX_ACK_OK])
+    {
         return false;
     }
 
     // SET PWR MODE
     writeReg = ICM42688P_ADDR_TBL[ICM42688P_ADDR_IDX_PWR_MGMT0];
     writeValue = ICM42688P_DAT_TBL[ICM42688P_REGDATA_IDX_LOW_NOIZE];
-    status = HAL_I2C_Mem_Write(&hi2c1,
-                               (ICM42688P_ADDRESS << 1),
-                               writeReg,
-                               I2C_MEMADD_SIZE_8BIT,
-                               &writeValue,
-                               1,
-                               100);
-    if (status != HAL_OK) {
+    status = HAL_I2C_Mem_Write( &hi2c1,
+                                (ICM42688P_ADDRESS << 1),
+                                writeReg,
+                                I2C_MEMADD_SIZE_8BIT,
+                                &writeValue,
+                                1,
+                                100);
+    if (status != HAL_OK)
+    {
         return false;
     }
 
@@ -176,30 +162,43 @@ static bool i2cmanager_gyro_Init(void)
     writeReg = ICM42688P_ADDR_TBL[ICM42688P_ADDR_IDX_GYRO_CNF0];
     writeValue = ICM42688P_DAT_TBL[ICM42688P_REGDATA_IDX_ODR_2KHZ];
     status = HAL_I2C_Mem_Write(&hi2c1,
-                               (ICM42688P_ADDRESS << 1),
-                               writeReg,
-                               I2C_MEMADD_SIZE_8BIT,
-                               &writeValue,
-                               1,
-                               100);
-    if (status != HAL_OK) {
+                                (ICM42688P_ADDRESS << 1),
+                                writeReg,
+                                I2C_MEMADD_SIZE_8BIT,
+                                &writeValue,
+                                1,
+                                100);
+    if (status != HAL_OK)
+    {
         return false;
     }
 
     // SET ACCL CONFIG
     writeReg = ICM42688P_ADDR_TBL[ICM42688P_ADDR_IDX_ACCL_CNF0];
     writeValue = ICM42688P_DAT_TBL[ICM42688P_REGDATA_IDX_ODR_2KHZ];
-    status = HAL_I2C_Mem_Write(&hi2c1,
-                               (ICM42688P_ADDRESS << 1),
-                               writeReg,
-                               I2C_MEMADD_SIZE_8BIT,
-                               &writeValue,
-                               1,
-                               100);
-    if (status != HAL_OK) {
+    status = HAL_I2C_Mem_Write( &hi2c1,
+                                (ICM42688P_ADDRESS << 1),
+                                writeReg,
+                                I2C_MEMADD_SIZE_8BIT,
+                                &writeValue,
+                                1,
+                                100);
+    if (status != HAL_OK)
+    {
         return false;
     }
 
+    return true;
+}
+
+static bool i2cmanager_display_Init(void)
+{
+    // ディスプレイの初期化処理をここに記述
+    int i;
+    for (i = 0; i < 1024; i++)
+    {
+        i2cmanager_display_buffer[i] = i % 0xFF;
+    }
     return true;
 }
 
@@ -209,11 +208,17 @@ static void i2cmanager_gyro_Request(void)
                             (ICM42688P_ADDRESS << 1),       // Device Address
                             ICM42688P_ADDR_TBL[ICM42688P_ADDR_IDX_TEMP_DTX1],   // Device Register Address
                             1,                                                  // Size of Device Register Address
-                            i2cmanager_gyro_datas,     // Pointer to data buffer
+                            i2cmanager_gyro_datas_dma,     // Pointer to data buffer
                             ICM42688P_BURST_READ_SIZE   // Amount of data to be read
                             );
 }
 
+static void i2cmanager_display_Send(void)
+{
+    // ディスプレイにデータを送信する処理をここに記述
+    // 例: HAL_I2C_Mem_Write(&hi2c1, (DISPLAY_ADDRESS << 1), DISPLAY_DATA_REG, I2C_MEMADD_SIZE_8BIT, i2cmanager_display_buffer, sizeof(i2cmanager_display_buffer), 100);
+    HAL_I2C_Mem_Write_DMA(&hi2c1, (0x3C << 1), 0x00, 1, i2cmanager_display_buffer, 20);
+}
 
 /*========AAAA Private Function Definition END AAAA==========================*/
 
