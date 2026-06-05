@@ -7,14 +7,18 @@
  */
 
 /*========VVVV Include Standard Header START VVVV============================*/
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 /*========AAAA Include Standard Header END AAAA==============================*/
 
 /*========VVVV Include Local Header START VVVV===============================*/
 #include <test_and_debug.h>
+
+#ifdef  DEBUGMODE_NONE_TEST
+    #include <xprintf.h>
+    #include <string.h>
+    #include <stdlib.h>
+#endif /* DEBUGMODE_NONE_TEST */
+
 #include "sac.h"
 /*========AAAA Include Local Header END AAAA=================================*/
 

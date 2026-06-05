@@ -27,7 +27,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
+// #include <stdio.h>
+#include <xprintf.h>
 
 #include "../../usercodes/sac/sac.h"
 #include "../../usercodes/app/app.h"
@@ -101,6 +102,9 @@ void timerInterruptHandler_10msB(void);
 int __io_putchar(int ch){
     HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1 , 0xFFFF );
     return ch;
+}
+void _x_putchar(int ch) {
+    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1 , 0xFFFF );
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -213,7 +217,8 @@ int main(void)
   timerIntrDevCnt = 0;
   __HAL_TIM_SET_COUNTER(&htim6, 250);
   HAL_TIM_Base_Start_IT(&htim6);
-  printf("\r\n=== !! IJK BOOT OK !! ===\r\n");
+  xdev_out(_x_putchar);
+  xprintf("\r\n=== !! IJK BOOT OK !! ===\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */

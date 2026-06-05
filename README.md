@@ -135,5 +135,6 @@ usercodes/common/test_debug.hの_ENABLE_SAC_TEST_を有効にすることで、�
 SAC_DEBUGMODEに各デバッグ用マクロを設定することで各SACがデバッグモードとして動作する
 
 # License
-IJKProject under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
- 
+- IJKProject under [MIT license](https://en.wikipedia.org/wiki/MIT_License)
+- [xprintf](https://elm-chan.org/fsw/strf/xprintf_j.html)
+
