@@ -137,4 +137,5 @@ SAC_DEBUGMODEに各デバッグ用マクロを設定することで各SACがデ�
 # License
 - IJKProject under [MIT license](https://en.wikipedia.org/wiki/MIT_License)
 - [xprintf](https://elm-chan.org/fsw/strf/xprintf_j.html)
+    - xprintfのxsprintfにバッファオーバーラーン対策として文字数制限機能を追加
 
