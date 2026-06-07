@@ -11,7 +11,7 @@
 #include <test_and_debug.h>
 
 #if SAC_DEBUGMODE == DEBUGMODE_IMU_TEST
-#include <stdio.h>
+#include <xprintf.h>
 #include <stdlib.h>
 #include <string.h>
 #endif /* SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST */
@@ -164,10 +164,11 @@ void imuMeasure_1ms(void)
 
 #if SAC_DEBUGMODE == DEBUGMODE_IMU_TEST
 uint8_t imuTest(char* strBuffer, uint8_t maxBufferSize) {
-    return snprintf(strBuffer,maxBufferSize, "temp=,%8.4f,X=,%-8.4f,Y=,%-8.4f,Z=,%-8.4F,ROLL=,%-8.4F,PITCH=,%-8.4F,YAW=,%-8.4F",
-                                            imu_temp_data,
-                                            imu_data.accel.x, imu_data.accel.y, imu_data.accel.z,
-                                            imu_data.gyro.roll, imu_data.gyro.pitch, imu_data.gyro.yaw);
+    xsnprintf(strBuffer,maxBufferSize, "temp=,%8.4f,X=,%-8.4f,Y=,%-8.4f,Z=,%-8.4f,ROLL=,%-8.4f,PITCH=,%-8.4f,YAW=,%-8.4f",
+                            imu_temp_data,
+                            imu_data.accel.x, imu_data.accel.y, imu_data.accel.z,
+                            imu_data.gyro.roll, imu_data.gyro.pitch, imu_data.gyro.yaw);
+    return 0;
 }
 #endif /* SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST */
 /*========AAAA GLOBAL Function Definition END AAAA===========================*/

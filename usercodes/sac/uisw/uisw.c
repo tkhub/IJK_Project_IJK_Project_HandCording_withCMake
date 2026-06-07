@@ -16,7 +16,7 @@
 
 #if SAC_DEBUGMODE == DEBUGMODE_UISW_TEST
 // デバッグではターミナルへの文字表示を行う
-#include <stdio.h>
+#include <xprintf.h>
 #include <string.h>
 #endif /* DEBUGMODE_UISW_TEST */
 
@@ -322,7 +322,8 @@ uint8_t uiswTest(char* strBuffer, uint8_t maxBufferSize) {
         strncpy(sqstr, "!SQERR!", 12);
         break;
     }
-    return snprintf(strBuffer, maxBufferSize,"SQ:%s, EV=%s, SW1CNT=%d, SW2CNT=%d", sqstr, evstr, sw1cnt, sw2cnt);
+    xsnprintf(strBuffer, maxBufferSize,"SQ:%s, EV=%s, SW1CNT=%d, SW2CNT=%d", sqstr, evstr, sw1cnt, sw2cnt);
+    return 0;
 }
 
 #endif /* SAC_DEBUGMODE == DEBUGMODE_UISW_TEST */

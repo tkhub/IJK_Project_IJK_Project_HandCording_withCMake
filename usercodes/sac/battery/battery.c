@@ -16,7 +16,7 @@
 #include "orgtypedef.h"
 
 #if SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST
-#include <stdio.h>
+#include <xprintf.h>
 #include <stdlib.h>
 #endif /* SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST */
 
@@ -152,7 +152,8 @@ uint8_t batteryTest(char* strBuffer, uint8_t maxBufferSize) {
     batterystatus_t btst;
     btst = batteryReadStateatus();
     batteryState2String(btst, batteryStr);
-    return snprintf(strBuffer, maxBufferSize, "Vbat = %f(%d),\t\tState = %s(%d,%d)", batteryRead(), batteryRaw, batteryStr, batteryStateLevel, btst);
+    xsnprintf(strBuffer, maxBufferSize, "Vbat = %f(%d),\t\tState = %s(%d,%d)", batteryRead(), batteryRaw, batteryStr, batteryStateLevel, btst);
+    return 0;
 }
 #endif /* SAC_DEBUGMODE == DEBUGMODE_BATTERY_TEST */
 

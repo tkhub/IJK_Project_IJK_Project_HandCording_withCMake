@@ -13,44 +13,17 @@
 /*========VVVV Include Local Header START VVVV===============================*/
 #include <test_and_debug.h>
 
-#ifdef  DEBUGMODE_NONE_TEST
     #include <xprintf.h>
     #include <string.h>
     #include <stdlib.h>
-#endif /* DEBUGMODE_NONE_TEST */
 
 #include "sac.h"
 /*========AAAA Include Local Header END AAAA=================================*/
 
 /*========VVVV Typedef Definition START VVVV=================================*/
-/**
- * @brief ABC_t 型の列挙体
- */
-/**
- * typedef enum {
- *  A,  //! Aの説明
- *  B,  //! Bの説明
- *  C   //! Cの説明
- * } ABC_t;
-*/
-
-/**
- * @brief DEF_t 型の構造体
- */
-/**
- * typedef struct {
- *  int D,  //!  Dの説明
- *  int E,  //!  Eの説明
- *  int F   //!  Fの説明
- * } DEF_t;
-*/
-
 /*========AAAA Typedef Definition END AAAA===================================*/
 
 /*========VVVV MACRO Definition START VVVV===================================*/
-/** 
- * @brief マクロ MAX_NANK の説明
- */
 /* # define MAX_NANKA 256 */
 
 /*========AAAA MACRO Definition END AAAA=====================================*/
@@ -61,9 +34,6 @@
 /*========AAAA GLOBAL Variable Definition END AAAA===========================*/
 
 /*========VVVV Private Variable Definition START VVVV========================*/
-/**
- * @brief 内部グローバル変数 internal_var の説明  
-*/
 /**
  * static int internal_var;
 */
@@ -114,7 +84,7 @@ void sacLoop(void) {
         #elif SAC_DEBUGMODE == DEBUGMODE_IMU_TEST
             imuTest(teststr, 180);
         #endif /* DEBUGMODE_UISW_TEST */
-        printf("%d\t%s\r\n", testcnt, teststr);
+        xprintf("%d\t%s\r\n", testcnt, teststr);
         testcnt++;
     #endif /* _ENABLE_SAC_TEST_ */
 

@@ -18,7 +18,7 @@
 #include "linmkrssr_private.h"
 
 #if SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST
-#include <stdio.h>
+#include <xprintf.h>
 #include <stdlib.h>
 #include <string.h>
 #include <hex2bindec.h>
@@ -255,16 +255,17 @@ uint8_t linmkrssrTest(char* strBuffer, uint8_t maxBufferSize) {
     uint8_t linebin = linesensorsReadBin();
     float linepos = linesensorsReadPosition();
     uint8_t mkr = markersensorsRead();
-    return snprintf(strBuffer,maxBufferSize, "L-pos=%-8.4f, L-Bin=0x%02X, mk=0x%01X, raw=%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d), nrm = %-6.3f,%-6.3f,%-6.3f,%-6.3f",
-                                        //linepos, HEX_TO_BIN_DEC(linebin), HEX_TO_BIN_DEC(mkr),
-                                        linepos, linebin, mkr,
-                                        rawMarkersensorValue[MKL_SSR], markerSensorsParam[MKL_SSR].thresholdH, markerSensorsParam[MKL_SSR].thresholdL,
-                                        rawLinesensorValues[LL_SSR],  lineSensorsParam[LL_SSR].thresholdH, lineSensorsParam[LL_SSR].thresholdL,
-                                        rawLinesensorValues[LC_SSR],  lineSensorsParam[LC_SSR].thresholdH, lineSensorsParam[LC_SSR].thresholdL,
-                                        rawLinesensorValues[RC_SSR],  lineSensorsParam[RC_SSR].thresholdH, lineSensorsParam[RC_SSR].thresholdL,
-                                        rawLinesensorValues[RR_SSR],  lineSensorsParam[RR_SSR].thresholdH, lineSensorsParam[RR_SSR].thresholdL,
-                                        rawMarkersensorValue[MKR_SSR], markerSensorsParam[MKR_SSR].thresholdH, markerSensorsParam[MKR_SSR].thresholdL,
-                                        nrmLinesensors[LL_SSR], nrmLinesensors[LC_SSR], nrmLinesensors[RC_SSR], nrmLinesensors[RR_SSR]);
+    xsnprintf(strBuffer,maxBufferSize, "L-pos=%-8.4f, L-Bin=0x%02X, mk=0x%01X, raw=%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d),%04d(%04d,%04d), nrm = %-6.3f,%-6.3f,%-6.3f,%-6.3f",
+                                    //linepos, HEX_TO_BIN_DEC(linebin), HEX_TO_BIN_DEC(mkr),
+                                    linepos, linebin, mkr,
+                                    rawMarkersensorValue[MKL_SSR], markerSensorsParam[MKL_SSR].thresholdH, markerSensorsParam[MKL_SSR].thresholdL,
+                                    rawLinesensorValues[LL_SSR],  lineSensorsParam[LL_SSR].thresholdH, lineSensorsParam[LL_SSR].thresholdL,
+                                    rawLinesensorValues[LC_SSR],  lineSensorsParam[LC_SSR].thresholdH, lineSensorsParam[LC_SSR].thresholdL,
+                                    rawLinesensorValues[RC_SSR],  lineSensorsParam[RC_SSR].thresholdH, lineSensorsParam[RC_SSR].thresholdL,
+                                    rawLinesensorValues[RR_SSR],  lineSensorsParam[RR_SSR].thresholdH, lineSensorsParam[RR_SSR].thresholdL,
+                                    rawMarkersensorValue[MKR_SSR], markerSensorsParam[MKR_SSR].thresholdH, markerSensorsParam[MKR_SSR].thresholdL,
+                                    nrmLinesensors[LL_SSR], nrmLinesensors[LC_SSR], nrmLinesensors[RC_SSR], nrmLinesensors[RR_SSR]);
+    return 0;
 }
 #endif /* SAC_DEBUGMODE == DEBUGMODE_LINEMKR_TEST */
 

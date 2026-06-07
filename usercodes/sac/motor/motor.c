@@ -19,7 +19,7 @@
 #include "gpio.h"
 
 #if SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST
-#include <stdio.h>
+#include <xprintf.h>
 #include <string.h>
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */
 
@@ -367,12 +367,10 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
     motorsReadPower(&pwrL, &pwrR);
     motorsReadRound(&roundL, &roundR);
     motorsReadRps(&rpsL, &rpsR);
-    // return snprintf(strBuffer, maxBufferSize,
-    //         "cnt = %d, pwrL,R = %f,%f, rpsL,R = %f,%f, roundL,R = %f,%f",
-    //         testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
-    return snprintf(strBuffer, maxBufferSize,
-            ",%d,%d,%f,%f,%f,%f,%f,%f",
-            testMode, testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
+    xsnprintf(strBuffer, maxBufferSize,
+        ",%d,%d,%f,%f,%f,%f,%f,%f",
+        testMode, testCnt, pwrL, pwrR, rpsL,rpsR, roundL,roundR);
+    return 0;
 }
 #else /* __ENCODER_TEST__ */
 uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
@@ -395,7 +393,7 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
         }
         printf("}\n\r");
     }
-    return snprintf(strBuffer, maxBufferSize,"ENCTEST END");
+    return xsnprintf(strBuffer, maxBufferSize,"ENCTEST END");
 }
 #endif /* __ENCODER_TEST__ */
 #endif /* SAC_DEBUGMODE == DEBUGMODE_MOTOR_TEST */

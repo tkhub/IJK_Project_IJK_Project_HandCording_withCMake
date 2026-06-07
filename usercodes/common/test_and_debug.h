@@ -25,7 +25,7 @@ extern "C" {
     #define DEBUGMODE_LINEMKR_TEST      4                       //! ラインセンサ・マーカセンサのテストデバッグ用のスイッチ
     #define DEBUGMODE_BATTERY_TEST      5                       //! バッテリーのテスト・デバッグ用のスイッチ
     #define DEBUGMODE_IMU_TEST          6                       //! IMUセンサのテスト・デバッグ用のスイッチ
-    #define SAC_DEBUGMODE               DEBUGMODE_IMU_TEST      //! 現在のSACレイヤーのテスト・デバッグモード
+    #define SAC_DEBUGMODE               DEBUGMODE_LINEMKR_TEST  //! 現在のSACレイヤーのテスト・デバッグモード
 #else
     #define DEBUGMODE_NONE_TEST         0                       //! テスト・デバッグ用のスイッチ
     #define SAC_DEBUGMODE               DEBUGMODE_NONE_TEST     //! 現在のSACレイヤーのテスト・デバッグモード
