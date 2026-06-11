@@ -63,11 +63,9 @@ typedef enum {
 /*========VVVV GLOBAL Function Declaration START VVVV========================*/
 /**
  * @brief UISW初期化関数
- * @param [in] buffer 確保してもらったUISWキューバッファの先頭アドレス
- * @param [in] buffersize 確保してもらったUISWキューバッファのサイズ
- * @details UISWキューの初期化。領域は呼び出し元に確保してもらう。
+ * @details UISWキューの初期化
  */
-void uiswInit(volatile uiswevent_t* buffer, uint8_t buffersize);
+void uiswInit(void);
 
 /**
  * @brief UISWポーリング関数
