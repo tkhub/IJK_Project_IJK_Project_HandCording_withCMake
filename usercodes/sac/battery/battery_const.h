@@ -56,44 +56,6 @@ extern const float BATTERY_OFFSET;
  */
 extern const float BATTERY_IIRLPF_GAIN;
 
-//! @brief LIPO 通常状態 → 満充電 しきい値
-extern const float BATTERY_LIPO_NORMFULL;
-//! @brief LIPO 満充電 → 通常状態 しきい値
-extern const float BATTERY_LIPO_FULLNORM;
-
-//! @brief LIPO 消耗注意 → 通常状態 しきい値
-extern const float BATTERY_LIPO_WRNNORM;
-//! @brief LIPO 通常状態 → 消耗注意 しきい値
-extern const float BATTERY_LIPO_NORMWRN;
-
-//! @brief LIPO 過放電警告 → 消耗注意 しきい値
-extern const float BATTERY_LIPO_EMPWRN;
-//! @brief LIPO 消耗注意 → 過放電警告 しきい値
-extern const float BATTERY_LIPO_WRNEMP;
-
-//! @brief LIPOと単３の識別しきい値
-extern const float BATTERY_AAA_LIPO;
-
-//! @brief 単３ 通常状態 → 満充電 しきい値
-extern const float BATTERY_AAA_NORMFULL;
-//! @brief 単３ 満充電 → 通常状態 しきい値
-extern const float BATTERY_AAA_FULLNORM;
-
-//! @brief 単３ 消耗注意 → 通常状態 しきい値
-extern const float BATTERY_AAA_WRNNORM;
-//! @brief 単３ 通常状態 → 消耗注意 しきい値
-extern const float BATTERY_AAA_NORMWRN;
-
-//! @brief 単３ 過放電警告 → 消耗注意 しきい値
-extern const float BATTERY_AAA_EMPWRN;
-//! @brief 単３ 消耗注意 → 過放電警告 しきい値
-extern const float BATTERY_AAA_WRNEMP;
-
-//! @brief 最下限の電圧。これ以下はありえない。
-extern const float BATTERY_VOLTAGE_LO_ERROR;
-//! @brief 最大限の電圧。これ以上はありえない。
-extern const float BATTERY_VOLTAGE_HI_ERROR;
-
 extern const BatteryThresholdsTables_t BATTERY_THRESHOLDS_TABLES;
 
 /**

@@ -4,14 +4,14 @@
  
 # Requirement
 ## Software
-* STM32CubeMX
-* STM32CubeCLT
-* STM32CubeProgramer
+* STM32CubeMX (6.17.0)
+* (STM32CubeCLT)
+* (STM32CubeProgramer)
 * VSCode
-* [STM32 VS code extension](https://www.st.com/content/st_com/ja/campaigns/stm32-vs-code-extension-z11.html)
+* [STM32 VS code extension](https://www.st.com/content/st_com/ja/campaigns/stm32-vs-code-extension-z11.html) (v3.x)
   
 ## [Hardware](https://github.com/rt-net/TrainingTracer_V3_Hardware)
-V2キットの場合、以下の改造を実施。(TrainingTracerV3相当)
+**V2キットの場合**、以下の改造を実施。(TrainingTracerV3にて解決済み)
 ### 意図しないタイヤの回転を抑制
 ソフトの書き換え中など、マイコンが起動していない際にタイヤが回転してしまうため、PWM端子を10kΩでプルダウンして電位を固定。
 
@@ -25,6 +25,7 @@ V2キットの場合、以下の改造を実施。(TrainingTracerV3相当)
  
 ### IMUセンサをICM42688Pに換装
 搭載方向はV3と同等とし、適宜両面テープ等で固定する。
+(左方向がY軸。前方がX軸。上方がZ軸)
 
 # Usage
 ## ドライバ機能
