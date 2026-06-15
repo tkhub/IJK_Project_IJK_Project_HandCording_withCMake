@@ -33,9 +33,8 @@
 
 /*========VVVV Private Variable Definition START VVVV========================*/
 
-static buzzerSchedule_t* buzzerScheduleBuffer;
-static buzzerSchedule_t buzzerScheduleExec;
-static uint8_t buzzerScheduleBufferSize;
+static buzzerSchedule_t    buzzerScheduleBuffer[BUZZERSCHEDULE_BUFFER_SIZE];
+static buzzerSchedule_t     buzzerScheduleExec;
 volatile static uint8_t buzzerBufferTail;
 volatile static uint8_t buzzerBufferHead;
 volatile static uint16_t buzzerOnCount;
@@ -54,9 +53,7 @@ static uint8_t testModeCnt;
 
 /*========VVVV GLOBAL Function Definition START VVVV=========================*/
 
-void buzzerInit(buzzerSchedule_t* bzbfr, uint8_t bzbfrsize) {
-    buzzerScheduleBuffer = bzbfr;
-    buzzerScheduleBufferSize = bzbfrsize;
+void buzzerInit(void) {
     buzzerBufferHead = 0;
     buzzerBufferTail = 0;
     buzzerOnCount = 0;
@@ -84,7 +81,7 @@ void buzzer_10ms(void) {
     }
     else {
         if (buzzerBufferHead != buzzerBufferTail) {
-            buzzerBufferHead = (buzzerBufferHead + 1) % buzzerScheduleBufferSize;
+            buzzerBufferHead = (buzzerBufferHead + 1) % BUZZERSCHEDULE_BUFFER_SIZE;
             buzzerScheduleExec = *(buzzerScheduleBuffer + buzzerBufferHead);
             buzzerOnCount = buzzerScheduleExec.oncount10ms;
             buzzerOffCount = buzzerScheduleExec.offcount10ms;
@@ -96,7 +93,7 @@ void buzzer_10ms(void) {
 void buzzerSetSchedule(buzzerSchedule_t bzsch) {
     __disable_irq();
     *(buzzerScheduleBuffer + buzzerBufferTail) = bzsch;
-    buzzerBufferTail = (buzzerBufferTail + 1) % buzzerScheduleBufferSize;
+    buzzerBufferTail = (buzzerBufferTail + 1) % BUZZERSCHEDULE_BUFFER_SIZE;
     __enable_irq();
 }
 

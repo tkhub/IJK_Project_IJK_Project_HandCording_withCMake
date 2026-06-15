@@ -39,7 +39,7 @@ typedef struct {
  * @brief マクロ MAX_NANK の説明
  */
 /* # define MAX_NANKA 256 */
-
+#define BUZZERSCHEDULE_BUFFER_SIZE 16
 /*========AAAA MACRO Definition END AAAA=====================================*/
 
 /*========VVVV GLOBAL Variable Declaration START VVVV========================*/
@@ -59,7 +59,7 @@ typedef struct {
  * @param [in] size バッファのサイズ
  * @details ブザー鳴動用スケジュール用のバッファは初期化元で確保してもらう
  */
-void buzzerInit(buzzerSchedule_t* bzbfr, uint8_t bzbfrsize);
+void buzzerInit(void);
 
 /**
  * @brief ブザー鳴動実行関数

@@ -57,7 +57,6 @@
 /* USER CODE BEGIN PV */
 volatile uint16_t   ADC1_DMA_data[3];
 volatile uint16_t   ADC2_DMA_data[4];
-buzzerSchedule_t    buzzerScheduleBuffer[16];
 volatile uint16_t   timerIntrDevCnt;
 
 /* USER CODE END PV */
@@ -205,7 +204,7 @@ int main(void)
   i2cmanagerInit();
   /// SAC INIT
   uiswInit();
-  buzzerInit(buzzerScheduleBuffer, sizeof(buzzerScheduleBuffer)/sizeof(buzzerScheduleBuffer[0]));
+  buzzerInit();
   motorsInit();
   linesensorsInit(&ADC2_DMA_data[2], &ADC2_DMA_data[1], &ADC2_DMA_data[0], &ADC1_DMA_data[0]);
   markersensorsInit(&ADC1_DMA_data[2], &ADC1_DMA_data[1]);
