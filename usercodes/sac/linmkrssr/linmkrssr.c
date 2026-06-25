@@ -186,10 +186,10 @@ void linesensorsMeasure_1ms(void){
     rawLinesensorValues[RC_SSR] = *linesensorDMARaw[RC_SSR];
     rawLinesensorValues[RR_SSR] = *linesensorDMARaw[RR_SSR];
 
-    nrmLinesensors[LL_SSR] = iirlpf(normalize(rawLinesensorValues[LL_SSR], lineSensorsParam[LL_SSR].nrm_gain, lineSensorsParam[LL_SSR].nrm_offset, 1.0, 0.0), nrmLinesensors[LL_SSR], LINESENSOR_IIRLPG);
-    nrmLinesensors[LC_SSR] = iirlpf(normalize(rawLinesensorValues[LC_SSR], lineSensorsParam[LC_SSR].nrm_gain, lineSensorsParam[LC_SSR].nrm_offset, 1.0, 0.0), nrmLinesensors[LC_SSR], LINESENSOR_IIRLPG);
-    nrmLinesensors[RC_SSR] = iirlpf(normalize(rawLinesensorValues[RC_SSR], lineSensorsParam[RC_SSR].nrm_gain, lineSensorsParam[RC_SSR].nrm_offset, 1.0, 0.0), nrmLinesensors[RC_SSR], LINESENSOR_IIRLPG);
-    nrmLinesensors[RR_SSR] = iirlpf(normalize(rawLinesensorValues[RR_SSR], lineSensorsParam[RR_SSR].nrm_gain, lineSensorsParam[RR_SSR].nrm_offset, 1.0, 0.0), nrmLinesensors[RR_SSR], LINESENSOR_IIRLPG);
+    nrmLinesensors[LL_SSR] = iirlpf(normalize(rawLinesensorValues[LL_SSR], lineSensorsParam[LL_SSR].nrm_gain, lineSensorsParam[LL_SSR].nrm_offset, 1.0F, 0.0F), nrmLinesensors[LL_SSR], LINESENSOR_IIRLPG);
+    nrmLinesensors[LC_SSR] = iirlpf(normalize(rawLinesensorValues[LC_SSR], lineSensorsParam[LC_SSR].nrm_gain, lineSensorsParam[LC_SSR].nrm_offset, 1.0F, 0.0F), nrmLinesensors[LC_SSR], LINESENSOR_IIRLPG);
+    nrmLinesensors[RC_SSR] = iirlpf(normalize(rawLinesensorValues[RC_SSR], lineSensorsParam[RC_SSR].nrm_gain, lineSensorsParam[RC_SSR].nrm_offset, 1.0F, 0.0F), nrmLinesensors[RC_SSR], LINESENSOR_IIRLPG);
+    nrmLinesensors[RR_SSR] = iirlpf(normalize(rawLinesensorValues[RR_SSR], lineSensorsParam[RR_SSR].nrm_gain, lineSensorsParam[RR_SSR].nrm_offset, 1.0F, 0.0F), nrmLinesensors[RR_SSR], LINESENSOR_IIRLPG);
     binLinesensors =    ( ( hysteresis(rawLinesensorValues[LL_SSR], ((binLinesensors & 0x08) >> 3), lineSensorsParam[LL_SSR].thresholdH, lineSensorsParam[LL_SSR].thresholdL) << 3 )    & 0x08) |
                         ( ( hysteresis(rawLinesensorValues[LC_SSR], ((binLinesensors & 0x04) >> 2), lineSensorsParam[LC_SSR].thresholdH, lineSensorsParam[LC_SSR].thresholdL) << 2 )    & 0x04) |
                         ( ( hysteresis(rawLinesensorValues[RC_SSR], ((binLinesensors & 0x02) >> 1), lineSensorsParam[RC_SSR].thresholdH, lineSensorsParam[RC_SSR].thresholdL) << 1 )    & 0x02) |
@@ -203,8 +203,8 @@ float linesensorsReadPosition(void) {
     for (cnt = 0; cnt < 4; cnt++) {
         linesum += nrmLinesensors[cnt];
     }
-    if ( (-0.01 < linesum ) && (linesum < 0.01)) {
-        return 0.0;
+    if ( (-0.01F < linesum ) && (linesum < 0.01F)) {
+        return 0.0F;
     }
     else {
         return (nrmLinesensors[LL_SSR] * lineSensorsParam[LL_SSR].offset +
@@ -273,7 +273,7 @@ uint8_t linmkrssrTest(char* strBuffer, uint8_t maxBufferSize) {
 
 /*========VVVV Private Function Definition START VVVV========================*/
 static float nrmGain(uint16_t white, uint16_t black) {
-    return 1.0 / (white - black);
+    return 1.0F / (white - black);
 }
 
 static float nrmOffset(float gain, uint16_t black) {

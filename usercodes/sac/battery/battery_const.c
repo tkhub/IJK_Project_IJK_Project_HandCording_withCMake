@@ -36,10 +36,10 @@ const float BATTERY_IIRLPF_GAIN = 0.25f;
 
 const BatteryThresholdsTables_t BATTERY_THRESHOLDS_TABLES = {
 /*                                                              */
-.rise_thresholds = {/*ERROR_L*/ 4.4,/*AAA_EMPTY*/ 1.15f*4.0f,/*AAA_WARNING*/ 1.20f*4.0f,/*AAA_NORMAL*/ 1.25f*4.0f,/*AAA_FULL*/ \
-                    /*AAA_FULL*/ 1.600f*4.0f,/*LIPO_EMPTY*/ 3.50f * 2.0f,/*LIPO_WARNING*/ 3.60f*2.0f,/*LIPO_NORMAL*/ 3.70f*2.0f,/*LIPO_FULL*/ 4.45f*2.0f,/*ERROR_Hi*/ 10.0f},
-.fall_thresholds = {/*ERROR_L*/ 4.35,/*AAA_EMPTY*/ 1.10f*4.0f,/*AAA_WARNING*/ 1.15f*4.0f,/*AAA_NORMAL*/ 1.20f*4.0f,/*AAA_FULL*/ \
-                    /*AAA_FULL*/ 1.450f*4.0f,/*LIPO_EMPTY*/ 3.325f * 2.0f,/*LIPO_WARNING*/ 3.50f*2.0f,/*LIPO_NORMAL*/ 3.65f*2.0f,/*LIPO_FULL*/ 4.35f*2.0f,/*ERROR_Hi*/ 9.0f}
+.rise_thresholds = {/*ERROR_L*/ 4.4F,/*AAA_EMPTY*/ 1.15F*4.0F,/*AAA_WARNING*/ 1.20F*4.0F,/*AAA_NORMAL*/ 1.25F*4.0F,/*AAA_FULL*/ \
+                    /*AAA_FULL*/ 1.600F*4.0f,/*LIPO_EMPTY*/ 3.50F * 2.0f,/*LIPO_WARNING*/ 3.60F*2.0F,/*LIPO_NORMAL*/ 3.70F*2.0F,/*LIPO_FULL*/ 4.45F*2.0F,/*ERROR_Hi*/ 10.0f},
+.fall_thresholds = {/*ERROR_L*/ 4.35F,/*AAA_EMPTY*/ 1.10F*4.0f,/*AAA_WARNING*/ 1.15F*4.0f,/*AAA_NORMAL*/ 1.20f*4.0F,/*AAA_FULL*/ \
+                    /*AAA_FULL*/ 1.450F*4.0F,/*LIPO_EMPTY*/ 3.325F * 2.0f,/*LIPO_WARNING*/ 3.50F*2.0F,/*LIPO_NORMAL*/ 3.65F*2.0F,/*LIPO_FULL*/ 4.35F*2.0F,/*ERROR_Hi*/ 9.0F}
 };
 
 const uint16_t BATTERY_MASK_10MSCNT  = 100;

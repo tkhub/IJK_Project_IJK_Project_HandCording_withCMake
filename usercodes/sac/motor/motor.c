@@ -8,6 +8,8 @@
 
 /*========VVVV Include Standard Header START VVVV============================*/
 #include <orgtypedef.h>
+#include <math.h>
+#include <stdint.h>
 /*========AAAA Include Standard Header END AAAA==============================*/
 
 /*========VVVV Include Local Header START VVVV===============================*/
@@ -15,6 +17,7 @@
 #include "motor_const.h"
 #include "motor_private.h"
 
+#include "stm32f303x8.h"
 #include "tim.h"
 #include "gpio.h"
 
@@ -106,7 +109,7 @@ static int32_t encoderCalcStep(const uint16_t now, const uint16_t last, const ui
 /*========VVVV GLOBAL Function Definition START VVVV=========================*/
 void motorsInit(void) {
     // モータ停止
-    motorsDrive(0.0, 0.0);
+    motorsDrive(0.0F, 0.0F);
     // バッファ・オドメトリ初期化
     motorsResetRound();
 
@@ -164,26 +167,26 @@ void motorsControl_1ms(void) {
 
 void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
     float powerL, powerR;
-    if (1.0f < nrmPwrL) {
-        powerL = 1.0f;
+    if (1.0F < nrmPwrL) {
+        powerL = 1.0F;
     }
-    else if (nrmPwrL < -1.0) {
-        powerL = -1.0f;
+    else if (nrmPwrL < -1.0F) {
+        powerL = -1.0F;
     }
     else if ( (-STOP_NRMPWR_THRESHOLD < nrmPwrL) && (nrmPwrL < STOP_NRMPWR_THRESHOLD) ) {
-        powerL = 0.0f;
+        powerL = 0.0F;
     }
     else {
         powerL = nrmPwrL;
     }
-    if (1.0f < nrmPwrR) {
-        powerR = 1.0f;
+    if (1.0F < nrmPwrR) {
+        powerR = 1.0F;
     }
-    else if (nrmPwrR < -1.0f) {
-        powerR = -1.0f;
+    else if (nrmPwrR < -1.0F) {
+        powerR = -1.0F;
     }
     else if ( (-STOP_NRMPWR_THRESHOLD < nrmPwrR) && (nrmPwrR < STOP_NRMPWR_THRESHOLD) ) {
-        powerR = 0.0f;
+        powerR = 0.0F;
     }
     else {
         powerR = nrmPwrR;
@@ -192,9 +195,9 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
     __disable_irq();
     motorsPower[MOTOR_L] = powerL;
     motorsPower[MOTOR_R] = powerR;
-    if (powerL < 0) {
+    if (powerL < 0.0F) {
         // 左後進
-        powerL = -1.0f * powerL;
+        powerL = -1.0F * powerL;
         if (!POWER_DIRECTION_INV_L)
         {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin, MOTOR_CCW_L);
@@ -208,7 +211,7 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
     else
     {
         // 左前進
-        powerL = 1.0f * powerL;
+        powerL = 1.0F * powerL;
         if (!POWER_DIRECTION_INV_L)
         {
             HAL_GPIO_WritePin(DIR_L_GPIO_Port,DIR_L_Pin,MOTOR_CW_L);
@@ -220,9 +223,9 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
         __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint16_t)(3199 * powerL) );
     }
 
-    if (powerR < 0) {
+    if (powerR < 0.0F) {
         // 左後進
-        powerR = -1.0f * powerR;
+        powerR = -1.0F * powerR;
         if (!POWER_DIRECTION_INV_R)
         {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin, MOTOR_CCW_R);
@@ -235,7 +238,7 @@ void motorsDrive(const float nrmPwrL, const float nrmPwrR) {
     }
     else {
         // 左前進
-        powerR = 1.0 * powerR;
+        powerR = 1.0F * powerR;
         if (!POWER_DIRECTION_INV_R) {
             HAL_GPIO_WritePin(DIR_R_GPIO_Port,DIR_R_Pin,MOTOR_CW_R);
         }
@@ -363,7 +366,7 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
     {
         testCnt++;
     }
-    motorsDrive((float)testModePowerLeft / 100.0f, (float)testModePowerRight/ 100.0f);
+    motorsDrive((float)testModePowerLeft / 100.0F, (float)testModePowerRight/ 100.0F);
     motorsReadPower(&pwrL, &pwrR);
     motorsReadRound(&roundL, &roundR);
     motorsReadRps(&rpsL, &rpsR);
@@ -380,7 +383,7 @@ uint8_t motorTest(char* strBuffer, uint8_t maxBufferSize)
     for (encpwrcnt = -100; encpwrcnt <= 100; encpwrcnt += 20)
     {
         printf("[pwr = %d] : Left {\n\r", encpwrcnt);
-        motorsDrive((float)-encpwrcnt/ 100.0f, (float)encpwrcnt/ 100.0f);
+        motorsDrive((float)-encpwrcnt/ 100.0F, (float)encpwrcnt/ 100.0F);
         HAL_Delay(5000);
         for (cnt = 0; cnt < MOTOR_RPS_RECORD_SIZE; cnt++)
         {
