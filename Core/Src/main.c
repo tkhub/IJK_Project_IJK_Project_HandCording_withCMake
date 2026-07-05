@@ -58,7 +58,7 @@
 volatile uint16_t   ADC1_DMA_data[3];
 volatile uint16_t   ADC2_DMA_data[4];
 volatile uint16_t   timerIntrDevCnt;
-
+const uint16_t LOOP_DELAY_MS = 50;  /* 50ms */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,10 +97,6 @@ void timerInterruptHandler_10msB(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int __io_putchar(int ch){
-    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1 , 0xFFFF );
-    return ch;
-}
 void _x_putchar(int ch) {
     HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1 , 0xFFFF );
 }
@@ -145,7 +141,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-    int cnt = 0;
+    int i = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -178,13 +174,13 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-  for (cnt = 0; cnt < 8; cnt++) {
+  for (i = 0; i < 8; i ++) {
       HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 1);
       HAL_GPIO_WritePin(BUZZER_GPIO_Port,BUZZER_Pin,1);
-      HAL_Delay(64 - (cnt * 4));
+      HAL_Delay(64 - (i * 4));
       HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
       HAL_GPIO_WritePin(BUZZER_GPIO_Port,BUZZER_Pin,0);
-      HAL_Delay(128 - (cnt * 8));
+      HAL_Delay(128 - (i * 8));
   }
 
   // ADC start
@@ -229,7 +225,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-      HAL_Delay(50);
+      HAL_Delay(LOOP_DELAY_MS);
   }
   /* USER CODE END 3 */
 }

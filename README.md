@@ -130,6 +130,8 @@ Nculeoボードの緑色LEDが点灯している間は割り込みの実行時�
 #### ノン・リアルタイム制御
 - void appMainLoop(void)
     - リアルタイム制御ではない処理（UI等）を差し込む
+    - 関数が終了すると再び実行される
+        - 再実行間隔はmain.cのLOOP_DELAY_MSで規定(デフォルトは50ms)
 
 ## デバッグ・テスト
 usercodes/common/test_debug.hの_ENABLE_SAC_TEST_を有効にすることで、ドライバのデバッグ機能を有効化する。
@@ -139,4 +141,9 @@ SAC_DEBUGMODEに各デバッグ用マクロを設定することで各SACがデ�
 - IJKProject under [MIT license](https://en.wikipedia.org/wiki/MIT_License)
 - [xprintf](https://elm-chan.org/fsw/strf/xprintf_j.html)
     - xprintfのxsprintfにバッファオーバーラーン対策として文字数制限機能を追加
-
+    - デバッグを容易にするため浮動小数点(double)の演算を有効化している
+        - ROM容量削減が必要な場合は浮動小数点機能をオフすることができる
+```diff
+- #define     XF_USE_FP       XF_USE____  /* 1: Enable support for floating point in type e and f */
++ #define     XF_USE_FP       XF_NOT_USE  /* 1: Enable support for floating point in type e and f */
+```
